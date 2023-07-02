@@ -1,0 +1,264 @@
+#include <SDL.h>
+#include <SDL_image.h>
+#include<iostream>
+#include<list>
+#include"PlayingCard.h"
+#include"Deck.h"
+#include"Bank.h"
+#include<queue>
+#include"Player.h"
+#include"Dealer.h"
+
+
+const int WINDOW_WIDTH = 900;
+const int WINDOW_HEIGHT = 600;
+const int CARD_WIDTH = 100;
+const int CARD_HEIGHT = 150;
+
+std::vector<SDL_Rect> Rects;
+std::vector<std::pair<SDL_Texture*, SDL_Texture*>> Textures;
+
+void AddCardData(std::pair<SDL_Texture*, SDL_Texture*> textures) {
+	Rects.push_back({ 500, 200, 150, 200 });
+	Textures.push_back(textures);
+}
+
+
+
+double x = 1, y = 1;
+
+
+
+
+
+bool isMoving = true;
+int indexTexture = 0;
+
+void MoveCard(SDL_Rect distanation);
+
+int SDL_main(int argc, char* argv[]) 
+{
+	SDL_Renderer* renderer = nullptr;
+	
+	// Создание окна
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Window* window = SDL_CreateWindow("Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+	Deck& deck = Deck::GetInstance();
+	deck.SetRenderer(renderer);
+	deck.InitDeck();
+
+
+	
+
+	
+	
+
+	Player player(500);
+	Bank bank;
+
+	SDL_Event event;
+	bool isRunning = true;
+
+	Dealer dealer;
+	dealer.DealCards(player, 2);
+	dealer.DealCards(dealer, 2);
+
+	SDL_Rect StartRect{ 500, 200, 150, 200 };
+	SDL_Rect destinationRect{ 200, 400, 150, 200 };
+	SDL_Rect destinationRectForDealer{ 200, 100, 150, 200 };
+
+	std::vector<PlayingCard>* playerCardsPtr = player.GetCardInstance();
+	std::vector<PlayingCard>* dealerCardsPtr = dealer.GetCardInstance();
+	
+
+	AddCardData((*dealerCardsPtr)[0].GetTexture());
+
+	AddCardData((*dealerCardsPtr)[1].GetTexture());
+
+	AddCardData((*playerCardsPtr)[0].GetTexture());
+
+	AddCardData((*playerCardsPtr)[1].GetTexture());
+	
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 100, 100);
+
+
+	
+
+
+	bool skip = false;
+	while (isRunning) {
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) {
+				isRunning = false;
+			}
+		}
+
+
+			SDL_RenderClear(renderer);
+			if (indexTexture < 2)
+				MoveCard(destinationRectForDealer);
+			if (indexTexture > 1)
+				MoveCard(destinationRect);
+			SDL_RenderClear(renderer);
+		
+
+		int time = 0;
+		for (auto it : Textures) {
+			if (time == dealerCardsPtr->size() - 1)
+				SDL_RenderCopy(renderer, Textures[time].second, nullptr, &Rects[time]);
+			else
+				SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time]);
+			if (time == indexTexture)
+				break;
+			time++;
+		}
+		time = 0;
+		
+
+		// Оновлення відображення
+		SDL_RenderPresent(renderer);
+		if (isMoving == false) {
+			if ( indexTexture < Rects.size() - 1) {
+				
+				indexTexture++;
+				isMoving = true;
+			}
+			
+			
+		}
+
+
+
+		
+
+	}
+
+
+	
+
+
+		/*
+		Player player(500);
+		Bank bank;
+
+		Dealer dealer;
+
+
+		dealer.DealCards(player, 2);
+		dealer.DealCards(dealer, 2);
+		player.Bet(200, bank);
+
+		std::cout << "Player Hand:" << std::endl;
+		player.ShowHand();
+
+		std::cout << "Dealer Hand:" << std::endl;
+		dealer.ShowHand();
+
+		while (!player.getStanding()) {
+			std::cout << "Hit or Stand (1 - Hit, 2 - Stand): ";
+			int choice;
+			std::cin >> choice;
+
+			if (choice == 1) {
+				dealer.DealCards(player, 1);
+				std::cout << "Player Hand:" << std::endl;
+				player.ShowHand();
+
+				if (player.ShowScore().first > 21) {
+					player.SetBusted();
+					break;
+				}
+			}
+			else if (choice == 2) {
+				player.setStanding();
+				std::cout << "Player Stands" << std::endl;
+			}
+		}
+
+		dealer.DealCards(dealer);
+		std::cout << "Dealer Hand:" << std::endl;
+		dealer.ShowHand();
+
+		std::cout << "Player Hand:" << std::endl;
+		player.ShowHand();
+
+
+		//Win Logic
+
+		if (!player.GetBusted()) {
+			if (dealer.GetBusted()) {
+				std::cout << "Player Wins!" << std::endl;
+			}
+			else if (player.ShowScore() > dealer.ShowScore() || player.ShowScore().second == 21) {
+				std::cout << "Player Wins!" << std::endl;
+			}
+			else {
+				std::cout << "Dealer Wins!" << std::endl;
+			}
+		}
+		else {
+			std::cout << "Player Busted. Dealer Wins!" << std::endl;
+		}
+		// Ваш код логіки гри/відображення тут
+	}
+	
+	
+	*/
+	/*
+	if (player.GetBusted() == false) {
+		if(dealer.GetBusted())
+			std::cout << "Player won";
+		else {
+			if (player.ShowScore() > dealer.ShowScore() || player.ShowScore().first == 21) {
+				std::cout << "Player won";
+			}
+		}
+	}
+	else {
+
+		std::cout << "Player lost";
+	}
+
+	*/
+	
+
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	return 0;
+	
+}
+
+
+void MoveCard(SDL_Rect distanation) {
+
+
+	if (isMoving) {
+		if (Rects[indexTexture].x < distanation.x) {
+			x += 0.001;
+			Rects[indexTexture].x += x;
+		}
+		if (Rects[indexTexture].x > distanation.x - (30 * indexTexture)) {
+			x -= 0.001;
+			Rects[indexTexture].x += x;
+		}
+		if (Rects[indexTexture].y < distanation.y) {
+			y += 0.001;
+			Rects[indexTexture].y += y;
+		}
+		if (Rects[indexTexture].y > distanation.y) {
+			y -= 0.001;
+			Rects[indexTexture].y += y;
+		}
+
+		if (std::abs(Rects[indexTexture].x - distanation.x - (30 * indexTexture)) < 0.1 && std::abs(Rects[indexTexture].y - distanation.y) < 0.1) {
+			isMoving = false;
+			x = 1, y = 1;
+
+		}
+	}
+}

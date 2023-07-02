@@ -1,0 +1,216 @@
+#include <SDL.h>
+#include <SDL_image.h>
+#include<iostream>
+#include<list>
+#include"PlayingCard.h"
+#include"Deck.h"
+#include"Bank.h"
+#include<queue>
+#include"Player.h"
+#include"Dealer.h"
+
+
+const int WINDOW_WIDTH = 900;
+const int WINDOW_HEIGHT = 600;
+const int CARD_WIDTH = 100;
+const int CARD_HEIGHT = 150;
+
+
+
+
+
+int SDL_main(int argc, char* argv[]) 
+{
+	SDL_Renderer* renderer = nullptr;
+	
+	// Создание окна
+	SDL_Init(SDL_INIT_VIDEO);
+	SDL_Window* window = SDL_CreateWindow("Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+	Deck& deck = Deck::GetInstance();
+	deck.SetRenderer(renderer);
+	deck.InitDeck();
+
+
+	
+
+	
+	
+
+	Player player(500);
+	Bank bank;
+
+	SDL_Event event;
+	bool isRunning = true;
+
+
+	Dealer dealer;
+	dealer.DealCards(player, 2);
+	dealer.DealCards(dealer, 2);
+
+	PlayingCard *cardsPtr = player.GetCardInstance();
+	std::queue<SDL_Rect> destinationsRect;
+	std::queue<SDL_Texture*> Textures;
+	std::queue<SDL_Rect> CurrentPositions;
+
+	auto card1 = cardsPtr;
+	auto texture = card1->GetTexture();
+
+	auto card2 = cardsPtr + 1;
+	auto texture = card2->GetTexture();
+	
+
+	double x = 1, y = 1;
+
+	
+
+	SDL_SetRenderDrawColor(renderer, 0, 0, 100, 100);
+
+
+	SDL_Rect StartRect{ 400, 300, 150, 200 };
+	SDL_Rect destinationRect{ 200, 400, 150, 200 };
+	bool isMoving = true; 
+
+
+	while (isRunning) {
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT) {
+				isRunning = false;
+			}
+		}
+
+		
+		SDL_RenderClear(renderer);
+		
+		int textureWidth = 10, textureHeight = 120;
+		SDL_QueryTexture(texture.first, NULL, NULL, &textureWidth, &textureHeight);
+
+		
+		
+		
+
+		SDL_Rect CurrentPosition = {StartRect.x + x, StartRect.x + y, 150, 200};
+
+		if (isMoving) {
+			if (CurrentPosition.x < destinationRect.x)
+				 x += 0.1;
+			if (CurrentPosition.x > destinationRect.x)
+				 x -= 0.1;
+
+			if (CurrentPosition.y < destinationRect.y)
+				y += 0.1;
+			if (CurrentPosition.y > destinationRect.y)
+				y -= 0.1;
+
+			if (CurrentPosition.x == destinationRect.x && CurrentPosition.y == destinationRect.y)
+				isMoving = false;
+		}
+
+		SDL_RenderClear(renderer);
+
+		// Копіювання текстури на рендерер
+		SDL_RenderCopy(renderer, texture.first, nullptr, &CurrentPosition);
+
+		// Оновлення відображення
+		SDL_RenderPresent(renderer);
+	}
+
+
+	
+
+
+		/*
+		Player player(500);
+		Bank bank;
+
+		Dealer dealer;
+
+
+		dealer.DealCards(player, 2);
+		dealer.DealCards(dealer, 2);
+		player.Bet(200, bank);
+
+		std::cout << "Player Hand:" << std::endl;
+		player.ShowHand();
+
+		std::cout << "Dealer Hand:" << std::endl;
+		dealer.ShowHand();
+
+		while (!player.getStanding()) {
+			std::cout << "Hit or Stand (1 - Hit, 2 - Stand): ";
+			int choice;
+			std::cin >> choice;
+
+			if (choice == 1) {
+				dealer.DealCards(player, 1);
+				std::cout << "Player Hand:" << std::endl;
+				player.ShowHand();
+
+				if (player.ShowScore().first > 21) {
+					player.SetBusted();
+					break;
+				}
+			}
+			else if (choice == 2) {
+				player.setStanding();
+				std::cout << "Player Stands" << std::endl;
+			}
+		}
+
+		dealer.DealCards(dealer);
+		std::cout << "Dealer Hand:" << std::endl;
+		dealer.ShowHand();
+
+		std::cout << "Player Hand:" << std::endl;
+		player.ShowHand();
+
+
+		//Win Logic
+
+		if (!player.GetBusted()) {
+			if (dealer.GetBusted()) {
+				std::cout << "Player Wins!" << std::endl;
+			}
+			else if (player.ShowScore() > dealer.ShowScore() || player.ShowScore().second == 21) {
+				std::cout << "Player Wins!" << std::endl;
+			}
+			else {
+				std::cout << "Dealer Wins!" << std::endl;
+			}
+		}
+		else {
+			std::cout << "Player Busted. Dealer Wins!" << std::endl;
+		}
+		// Ваш код логіки гри/відображення тут
+	}
+	
+	
+	*/
+	/*
+	if (player.GetBusted() == false) {
+		if(dealer.GetBusted())
+			std::cout << "Player won";
+		else {
+			if (player.ShowScore() > dealer.ShowScore() || player.ShowScore().first == 21) {
+				std::cout << "Player won";
+			}
+		}
+	}
+	else {
+
+		std::cout << "Player lost";
+	}
+
+	*/
+	
+
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	return 0;
+	
+}
+
+
