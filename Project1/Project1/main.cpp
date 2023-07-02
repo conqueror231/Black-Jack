@@ -73,7 +73,10 @@ bool isMoving = true;
 int indexTexture = 0;
 bool isRunning = true;
 
+	
+
 void RenderThreadFunction(SDL_Renderer* renderer) {
+
 	while (true) {
 
 		if (isRunning == false)
@@ -83,6 +86,20 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
 		MoveCard();
 
+
+		TTF_Font* font = TTF_OpenFont("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/lazy.ttf", 24);
+		SDL_Color textColor = { 255, 255, 255, 255 }; // Белый цвет текста
+
+		SDL_Surface* textSurface = TTF_RenderText_Solid(font, "100", textColor);
+		SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+
+		SDL_Rect textRect;
+		textRect.x = 100;
+		textRect.y = 100;
+		textRect.w = textSurface->w;
+		textRect.h = textSurface->h;
+		
+		SDL_RenderCopy(renderer, textTexture, nullptr, &textRect);
 
 
 		SDL_Texture* textScorePlayer = ShowText({ 0,0,225 }, {(char*)player.ShowScore().first});
@@ -134,22 +151,6 @@ int main(int argc, char* argv[])
 
 //int SDL_main(int argc, char* argv[]) 
 {
-
-	std::ifstream file("E:\\02 c++\\01 myProjects\\04 Black Jack\\Project1\\Project1\\x64\\Release\\example.txt");
-
-	if (file.is_open()) {
-		std::string line;
-		while (std::getline(file, line)) {
-			std::cout << line << std::endl;
-		}
-		file.close();
-	}
-	else {
-		std::cout << "File not oppened!" << std::endl;
-	}
-
-
-	std::cout << "qeqwe" << std::endl;
 	
 	SDL_Init(SDL_INIT_VIDEO);
 	if (TTF_Init() == -1)
@@ -160,27 +161,9 @@ int main(int argc, char* argv[])
 	}
 
 	
-	TTF_Font* font = TTF_OpenFont("lazy.ttf", 24); // Замените "arial.ttf" на путь к вашему шрифту
-	if (font == nullptr)
-	{
-		// Помилка при відкритті шрифту
-		printf("Eroro when opening font: %s\n", TTF_GetError());
-		return -1; // або обробіть помилку за вашими потребами
-	}
 
-
-	SDL_Color textColor = { 255, 255, 255, 255 }; // Белый цвет текста
-
-	SDL_Surface* textSurface = TTF_RenderText_Solid(font, "Пример текста", textColor);
-	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-
-	SDL_Rect textRect;
-	textRect.x = 100;
-	textRect.y = 100;
-	textRect.w = textSurface->w;
-	textRect.h = textSurface->h;
 	
-
+	
 
 	// Создание окна
 	SDL_Init(SDL_INIT_VIDEO);
@@ -208,9 +191,7 @@ int main(int argc, char* argv[])
 	disp.TakeCard(dealer, 2);
 	disp.TakeCard(player, 2);
 
-	
 
-	disp.TakeCard(dealer, 1);
 
 	SDL_Rect StartRect{ 500, 200, 150, 200 };
 
@@ -228,7 +209,7 @@ int main(int argc, char* argv[])
 				renderThread.join();
 			}
 
-
+		
 		}
 
 
