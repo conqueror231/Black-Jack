@@ -26,13 +26,16 @@ public:
     void InitDeck()
     {
         std::string frontImagePath;
-        std::string backImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
+
+        //std::string backImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
+        std::string backImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/card back red.png";
         SDL_Surface* surface = IMG_Load(frontImagePath.c_str());
         SDL_Surface* surface2 = IMG_Load(backImagePath.c_str());
         for (int x = 0; x < 4; x++) {
             for (int i = 2; i < 11; i++)
             {
-                frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/" +
+                //frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/" +
+                frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/" +
                 std::to_string(i) + "_of_" + suits[x] + ".png";
 
                 surface = IMG_Load(frontImagePath.c_str());
@@ -42,11 +45,14 @@ public:
             }
             for (int i = 0; i < 3; i++)
             {
-                frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/" +  fronts[i] + "_of_" + suits[x] + "2.png";
+               // frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/" +  fronts[i] + "_of_" + suits[x] + "2.png";
+                frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/" + fronts[i] + "_of_" + suits[x] + "2.png";
                 surface = IMG_Load(frontImagePath.c_str());
                 cards.emplace_back(10, SDL_CreateTextureFromSurface(renderer, surface), SDL_CreateTextureFromSurface(renderer, surface2));
             }
-            frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
+            //frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
+            frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
+            surface = IMG_Load(frontImagePath.c_str());
             cards.emplace_back(11, SDL_CreateTextureFromSurface(renderer, surface), SDL_CreateTextureFromSurface(renderer, surface2));
         }
 
@@ -100,6 +106,7 @@ public:
                 cards[index].setIsUsing(true);
                 break;
             }
+           
         }
 
         return pickedCard;
