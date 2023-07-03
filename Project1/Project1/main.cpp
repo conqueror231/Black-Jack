@@ -12,6 +12,8 @@
 #include"SDL_ttf.h"
 #include<Windows.h>
 #include<fstream>
+#include <cstdlib>
+
 SDL_Texture* ShowText(SDL_Color color, const char * text);
 
 const int WINDOW_WIDTH = 900;
@@ -47,6 +49,7 @@ public:
 			Rects.push_back(temp);
 			Textures.push_back(playerCardsPtr->at(PlayerCardIndex).GetTexture());
 			PlayerCardIndex++;
+			
 		}
 
 	};
@@ -87,6 +90,7 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 		MoveCard();
 
 
+<<<<<<< HEAD
 		TTF_Font* font = TTF_OpenFont("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/lazy.ttf", 24);
 		SDL_Color textColor = { 255, 255, 255, 255 }; // Белый цвет текста
 
@@ -105,20 +109,27 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 		SDL_Texture* textScorePlayer = ShowText({ 0,0,225 }, {(char*)player.ShowScore().first});
 
 		SDL_Texture* textScoreDealer = ShowText({ 0,0,225 }, { (char*)dealer.ShowScore().first });
+=======
+		
+		SDL_Texture* textScorePlayer = ShowText({ 0,0,0 }, { std::to_string(player.ShowScore().first).c_str() });
+		
+		SDL_Texture* textScoreDealer = ShowText({ 0,0,225 }, {std::to_string(dealer.ShowScore().first).c_str() });
+>>>>>>> d187c4f4861f601f93ebf4a6cbc5258c030128a8
 
 		int time = 0;
 		for (auto it : Textures) {
 			if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
 				SDL_RenderCopy(renderer, Textures[time].second, nullptr, &Rects[time].first);
 				SDL_RenderCopy(renderer, textScoreDealer, nullptr, &Rects[time].first);
+			
 			}
 			else
 				SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
 
 			if (it == playerCardsPtr->at(playerCardsPtr->size() - 1).GetTexture()) {
 				
-				SDL_Rect rect{ 100,100,100,100 };
-				SDL_RenderCopy(renderer, textScorePlayer, nullptr, &rect);
+				
+				SDL_RenderCopy(renderer, textScorePlayer, nullptr, &Rects[time].first);
 			}
 
 			if (time == indexTexture)
@@ -151,7 +162,12 @@ int main(int argc, char* argv[])
 
 //int SDL_main(int argc, char* argv[]) 
 {
+<<<<<<< HEAD
 	
+=======
+
+
+>>>>>>> d187c4f4861f601f93ebf4a6cbc5258c030128a8
 	SDL_Init(SDL_INIT_VIDEO);
 	if (TTF_Init() == -1)
 	{
@@ -160,7 +176,18 @@ int main(int argc, char* argv[])
 		return -1; // або обробіть помилку за вашими потребами
 	}
 
+
+	TTF_Font* font = TTF_OpenFont("E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/x64/Debug/lazy.ttf", 24); // Замените "arial.ttf" на путь к вашему шрифту
 	
+<<<<<<< HEAD
+=======
+	if (font == nullptr)
+	{
+		// Помилка при відкритті шрифту
+		printf("Eroro when opening font: %s\n", TTF_GetError());
+		return -1; // або обробіть помилку за вашими потребами
+	}
+>>>>>>> d187c4f4861f601f93ebf4a6cbc5258c030128a8
 
 	
 	
@@ -188,10 +215,16 @@ int main(int argc, char* argv[])
 
 	dispenser disp;
 
-	disp.TakeCard(dealer, 2);
-	disp.TakeCard(player, 2);
+	disp.TakeCard(dealer, 20);
+	disp.TakeCard(player, 20);
 
+<<<<<<< HEAD
 
+=======
+	
+	
+	
+>>>>>>> d187c4f4861f601f93ebf4a6cbc5258c030128a8
 
 	SDL_Rect StartRect{ 500, 200, 150, 200 };
 
@@ -208,8 +241,13 @@ int main(int argc, char* argv[])
 				isRunning = false;
 				renderThread.join();
 			}
+<<<<<<< HEAD
 
 		
+=======
+			int smr;
+			//std::cin >> smr;
+>>>>>>> d187c4f4861f601f93ebf4a6cbc5258c030128a8
 		}
 
 
@@ -317,8 +355,8 @@ int main(int argc, char* argv[])
 
 SDL_Texture* ShowText(SDL_Color color, const char * text) {
 
-	TTF_Font* font = TTF_OpenFont("E:/02 c+/01 myProjects/04 Black Jack/Project1/Project1/fonts/lazy.ttf", 30);
-
+	//TTF_Font* font = TTF_OpenFont("E:/02 c+/01 myProjects/04 Black Jack/Project1/Project1/fonts/lazy.ttf", 30);
+	TTF_Font* font = TTF_OpenFont("E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/x64/Debug/lazy.ttf", 30);
 	SDL_Color textColor = color; 
 	SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, textColor);
 	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
