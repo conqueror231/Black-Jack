@@ -30,10 +30,10 @@ public:
 	}
 
 	void setStanding() { isStanding = true; };
-	void Bet(int money_, Bank bank) {
+	void Bet(int money_) {
 
 		
-		bank.SendMoney(money_);
+		Bank::GetInstance().SendMoney(money_);
 		money -= money_;
 		
 	}

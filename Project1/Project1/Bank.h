@@ -5,8 +5,15 @@ class Bank
 private: 
 	int totalMoney = 0;
 public: 
-	void ShowTotalMoney() const {
-		std::cout << "Bank: " << totalMoney;
+	static Bank& GetInstance()
+	{
+
+		static Bank instance;
+		return instance;
+	}
+
+	int GetTotalMoney() {
+		return totalMoney;
 	};
 	void SendMoney(int money) {
 		totalMoney += money;

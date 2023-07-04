@@ -69,8 +69,6 @@ public:
     }
 
     static Deck& GetInstance()
-
-
     {
 
         static Deck instance;
