@@ -27,34 +27,44 @@ public:
     {
         std::string frontImagePath;
 
-        std::string backImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
-        //std::string backImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/card back red.png";
-        SDL_Surface* surface = IMG_Load(frontImagePath.c_str());
+       // std::string backImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
+        std::string backImagePath = "E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
+  
         SDL_Surface* surface2 = IMG_Load(backImagePath.c_str());
         for (int x = 0; x < 4; x++) {
             for (int i = 2; i < 11; i++)
             {
-                frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" +
-                //frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/" +
+          //      frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" +
+                frontImagePath = "E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/" +
                     std::to_string(i) + "_of_" + suits[x] + ".png";
 
-                surface = IMG_Load(frontImagePath.c_str());
-
-
+                SDL_Surface* surface = IMG_Load(frontImagePath.c_str());
                 cards.emplace_back(i, SDL_CreateTextureFromSurface(renderer, surface), SDL_CreateTextureFromSurface(renderer, surface2));
+                SDL_FreeSurface(surface);
+                surface = nullptr;
+               
             }
             for (int i = 0; i < 3; i++)
             {
-                 frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" +  fronts[i] + "_of_" + suits[x] + "2.png";
-               // frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/" + fronts[i] + "_of_" + suits[x] + "2.png";
-                surface = IMG_Load(frontImagePath.c_str());
+               //  frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" +  fronts[i] + "_of_" + suits[x] + "2.png";
+                frontImagePath = "E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/" + fronts[i] + "_of_" + suits[x] + "2.png";
+                SDL_Surface* surface = IMG_Load(frontImagePath.c_str());
                 cards.emplace_back(10, SDL_CreateTextureFromSurface(renderer, surface), SDL_CreateTextureFromSurface(renderer, surface2));
+                SDL_FreeSurface(surface);
+                surface = nullptr;
+                
             }
-            frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
-            //frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
-            surface = IMG_Load(frontImagePath.c_str());
+            //frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
+            frontImagePath = "E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
+            SDL_Surface* surface = IMG_Load(frontImagePath.c_str());
             cards.emplace_back(11, SDL_CreateTextureFromSurface(renderer, surface), SDL_CreateTextureFromSurface(renderer, surface2));
+      
+            SDL_FreeSurface(surface);
+            surface = nullptr;
+           
         }
+        SDL_FreeSurface(surface2);
+        surface2 = nullptr;
 
     }
 

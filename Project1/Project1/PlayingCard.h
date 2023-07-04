@@ -9,7 +9,7 @@
 class PlayingCard
 {
 private:
-	int cardScore;
+	short int cardScore;
 	Suit suit;
 	bool isUsing = false;
 	SDL_Texture* textureFront = nullptr;
@@ -30,7 +30,7 @@ public:
 	{}
 
 
-	PlayingCard(int cardScore_, SDL_Texture* textureFront_, SDL_Texture* textureBack_)
+	PlayingCard(short int cardScore_, SDL_Texture* textureFront_, SDL_Texture* textureBack_)
 		: cardScore(cardScore_), textureFront(textureFront_), textureBack(textureBack_)
 	{}
 

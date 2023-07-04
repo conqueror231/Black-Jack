@@ -14,7 +14,7 @@
 #include<fstream>
 #include <cstdlib>
 
-SDL_Texture* ShowText(SDL_Color color, const char* text);
+void ShowText(SDL_Color color, const char* text, SDL_Texture*& texture);
 
 const int WINDOW_WIDTH = 900;
 const int WINDOW_HEIGHT = 600;
@@ -36,8 +36,9 @@ std::vector<PlayingCard>* dealerCardsPtr;
 std::vector<PlayingCard>* playerCardsPtr;
 
 
-int PlayerCardIndex = 0;
-int DealerCardIndex = 0;
+short int PlayerCardIndex = 0;
+short int DealerCardIndex = 0;
+
 class dispenser {
 public:
     void TakeCard(Player player_, int countOfCards_) {
@@ -103,6 +104,8 @@ bool lastDealersCardMustBeShown = false;
 
 SDL_Rect buttonRect = { 10, 50, 20, 60 };
 SDL_Rect hitButtonRect = { 10, 500, 60, 60 };
+
+
 void RenderThreadFunction(SDL_Renderer* renderer) {
     while (true) {
 
@@ -112,57 +115,68 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
 
         MoveCard();
-
+        
 
         if (betStage || hitOrStandStage) {
-            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+          //  SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+            SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+            
+
             if (surface == nullptr)
                 std::cout << "qweqwe";
 
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &buttonRect);
-            
+            SDL_DestroyTexture(buttonTexture);
+            SDL_FreeSurface(surface);
         }
         if (hitOrStandStage) {
-            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+            SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             if (surface == nullptr)
                 std::cout << "qweqwe";
 
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &hitButtonRect);
+            SDL_DestroyTexture(buttonTexture);
+            SDL_FreeSurface(surface);
             
         }
 
+        SDL_Texture* textScorePlayer = nullptr;
 
-        SDL_Texture* textScorePlayer = ShowText({ 0,0,0 }, { std::to_string(player.ShowScore().first).c_str() });
+        ShowText({ 0,0,0 }, { std::to_string(player.ShowScore().first).c_str() }, textScorePlayer);
 
-        SDL_Texture* textScoreDealer = ShowText({ 0,0,225 }, { std::to_string(dealer.ShowScore().first).c_str() });
+        SDL_Texture* textScoreDealer = nullptr;
+        ShowText({ 0,0,225 }, { std::to_string(dealer.ShowScore().first).c_str() }, textScoreDealer);
 
         int time = 0;
-        for (auto it : Textures) {
+        for (auto& it: Textures) {
             if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
+                //SDL_RenderCopy(renderer, textScoreDealer, nullptr, &Rects[time].first);
                 if(lastDealersCardMustBeShown)
                     SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
                 else
                     SDL_RenderCopy(renderer, Textures[time].second, nullptr, &Rects[time].first);
 
-                    SDL_RenderCopy(renderer, textScoreDealer, nullptr, &Rects[time].first);
+                 
 
             }
             else
                 SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
 
-            if (it == playerCardsPtr->at(playerCardsPtr->size() - 1).GetTexture()) 
-                SDL_RenderCopy(renderer, textScorePlayer, nullptr, &Rects[time].first);
+            if (it == playerCardsPtr->at(playerCardsPtr->size() - 1).GetTexture()) {}
+              // SDL_RenderCopy(renderer, textScorePlayer, nullptr, &Rects[time].first);
             
-
+               
             if (time == indexTexture)
                 break;
             time++;
         }
         time = 0;
 
-
+        SDL_DestroyTexture(textScorePlayer);
+        SDL_DestroyTexture(textScoreDealer);
+        
         // Оновлення відображення
         SDL_RenderPresent(renderer);
         if (isMoving == false) {
@@ -174,6 +188,8 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
 
         }
+
+     
 
     }
 }
@@ -199,7 +215,7 @@ int main(int argc, char* argv[])
     }
 
 
-  
+
     SDL_Window* window = SDL_CreateWindow("Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
@@ -227,23 +243,24 @@ int main(int argc, char* argv[])
 
 
     std::thread renderThread(RenderThreadFunction, renderer);
-
+    
     std::this_thread::sleep_for(std::chrono::milliseconds(16)); // ~60 FPS
 
 
     SDL_SetRenderDrawColor(renderer, 0, 0, 100, 100);
     SDL_RenderClear(renderer);
 
-  
+
     bool takeCard = false;
     int moneyToBet = 0;
     while (isRunning) {
-        
+
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 isRunning = false;
                 renderThread.join();
             }
+
             if (betStage == true)
             {
                 if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
@@ -268,18 +285,18 @@ int main(int argc, char* argv[])
                 }
 
             }
-            
+
             if (hitOrStandStage == true) {
-               
+
                 if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, buttonRect)) {
-                        
+
                         std::cout << "Hit card" << std::endl;
 
                         takeCard = true;
-                     
+
                     }
                 }
                 if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
@@ -287,14 +304,16 @@ int main(int argc, char* argv[])
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, hitButtonRect)) {
 
-                        player.setStanding();
-                       
+                        player.SetBusted();
+                        hitOrStandStage = false;
+                        dealerLogicStage = true;
+
                     }
                 }
-                
+
 
             }
-            
+
 
 
         }
@@ -310,20 +329,22 @@ int main(int argc, char* argv[])
             startCardsStage = false;
             hitOrStandStage = true;
         }
-        
+
         if (hitOrStandStage) {
 
-            if (player.ShowScore().first > 21) {
-                player.SetBusted();
-                hitOrStandStage = false;
-                dealerLogicStage = true;
-            }
             if (player.getStanding())
             {
                 hitOrStandStage = false;
                 dealerLogicStage = true;
 
             }
+
+            if (player.ShowScore().first > 21 && player.ShowScore().second != 21) {
+                player.SetBusted();
+                hitOrStandStage = false;
+                dealerLogicStage = true;
+            }
+
 
             if (takeCard) {
                 disp.TakeCard(player, 1);
@@ -338,10 +359,10 @@ int main(int argc, char* argv[])
                 winDefindingStage = true;
                 dealerLogicStage = false;
             }
-        
+
 
             disp.DealerLogic(dealer);
-            
+
 
             if (dealer.GetBusted()) {
                 winDefindingStage = true;
@@ -352,20 +373,20 @@ int main(int argc, char* argv[])
 
         if (winDefindingStage)
         {
-          
+
             int playerScore = player.ShowScore().first;
             int dealerScore = dealer.ShowScore().first;
 
-            if(player.ShowScore().second == 21 )
+            if (player.ShowScore().second == 21)
                 playerScore = player.ShowScore().second;
-           
+
             if (dealer.ShowScore().second == 21)
                 dealerScore = dealer.ShowScore().second;
 
-            std::cout << "player score:" << playerScore;
-            std::cout << "dealer score:" << dealerScore;
+            std::cout << "player score:" << playerScore << std::endl;
+            std::cout << "dealer score:" << dealerScore << std::endl;
 
-            if (player.GetBusted() == false) 
+            if (player.GetBusted() == false)
             {
 
                 if (dealer.GetBusted()) {
@@ -374,26 +395,26 @@ int main(int argc, char* argv[])
                 }
 
 
-                if ( playerScore > dealerScore && dealer.GetBusted() == false) {
+                if (playerScore > dealerScore && dealer.GetBusted() == false) {
                     std::cout << "player won";
                 }
-                if(dealerScore > playerScore && dealer.GetBusted() == false)
+                if (dealerScore > playerScore && dealer.GetBusted() == false)
                     std::cout << "dealer won";
-                }
-                else {
-                std::cout << "dealer won";
-                winDefindingStage = false;
-                     }
-             }
-      
-            winDefindingStage = false;
+            }
+            else
+                std::cout << "player lost" << std::endl;
+
         }
 
+        winDefindingStage = false;
 
-     
+    }
 
 
 
+
+
+    
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
@@ -402,15 +423,22 @@ int main(int argc, char* argv[])
 
 }
 
-SDL_Texture* ShowText(SDL_Color color, const char* text) {
+void ShowText(SDL_Color color, const char* text,SDL_Texture*& texture) {
 
-    //TTF_Font* font = TTF_OpenFont("E:/02 c+/01 myProjects/04 Black Jack/Project1/Project1/fonts/lazy.ttf", 30);
-    TTF_Font* font = TTF_OpenFont("E:/lazy.ttf", 30); 
+   
+   // TTF_Font* font = TTF_OpenFont("E:/lazy.ttf", 30); 
+    TTF_Font* font = TTF_OpenFont("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/lazy.ttf", 30);
     SDL_Color textColor = color;
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, textColor);
-    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    texture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
-    return textTexture;
+// Очистка SDL_Surface
+    SDL_FreeSurface(textSurface);
+    textSurface = nullptr;
+
+// Очистка TTF_Font
+    TTF_CloseFont(font);
+    font = nullptr;
 }
 
 
