@@ -1,4 +1,4 @@
-#pragma once
+п»ї#pragma once
 #include <vector>
 #include "PlayingCard.h"
 #include <random>
@@ -19,32 +19,24 @@ private:
     std::mt19937 gen;
 
     std::string suits[4]{ {"clubs"}, {"diamonds"}, {"hearts"}, {"spades" } };
-    std::string fronts[3]{ {"king"}, {"jack"}, {"queen"}};
-   
+    std::string fronts[3]{ {"king"}, {"jack"}, {"queen"} };
+
 
 public:
     void InitDeck()
     {
         std::string frontImagePath;
-<<<<<<< HEAD
-        std::string backImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
-=======
 
-        //std::string backImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
-        std::string backImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/card back red.png";
->>>>>>> d187c4f4861f601f93ebf4a6cbc5258c030128a8
+        std::string backImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
+        //std::string backImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/card back red.png";
         SDL_Surface* surface = IMG_Load(frontImagePath.c_str());
         SDL_Surface* surface2 = IMG_Load(backImagePath.c_str());
         for (int x = 0; x < 4; x++) {
             for (int i = 2; i < 11; i++)
             {
-<<<<<<< HEAD
                 frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" +
-=======
-                //frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/" +
-                frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/" +
->>>>>>> d187c4f4861f601f93ebf4a6cbc5258c030128a8
-                std::to_string(i) + "_of_" + suits[x] + ".png";
+                //frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/" +
+                    std::to_string(i) + "_of_" + suits[x] + ".png";
 
                 surface = IMG_Load(frontImagePath.c_str());
 
@@ -53,32 +45,24 @@ public:
             }
             for (int i = 0; i < 3; i++)
             {
-<<<<<<< HEAD
-                frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" +  fronts[i] + "_of_" + suits[x] + "2.png";
+                 frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" +  fronts[i] + "_of_" + suits[x] + "2.png";
+               // frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/" + fronts[i] + "_of_" + suits[x] + "2.png";
                 surface = IMG_Load(frontImagePath.c_str());
                 cards.emplace_back(10, SDL_CreateTextureFromSurface(renderer, surface), SDL_CreateTextureFromSurface(renderer, surface2));
             }
             frontImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
-=======
-               // frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/" +  fronts[i] + "_of_" + suits[x] + "2.png";
-                frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/" + fronts[i] + "_of_" + suits[x] + "2.png";
-                surface = IMG_Load(frontImagePath.c_str());
-                cards.emplace_back(10, SDL_CreateTextureFromSurface(renderer, surface), SDL_CreateTextureFromSurface(renderer, surface2));
-            }
-            //frontImagePath = "E:/02 c++/01 myProjects/04 Black Jack/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
-            frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
+            //frontImagePath = "E:/black jack/Black-Jack-main/Black-Jack-main/Project1/Project1/PNG-cards-1.3/ace_of_" + suits[x] + ".png";
             surface = IMG_Load(frontImagePath.c_str());
->>>>>>> d187c4f4861f601f93ebf4a6cbc5258c030128a8
             cards.emplace_back(11, SDL_CreateTextureFromSurface(renderer, surface), SDL_CreateTextureFromSurface(renderer, surface2));
         }
 
     }
 
     static Deck& GetInstance()
-       
+
 
     {
-       
+
         static Deck instance;
         return instance;
     }
@@ -110,7 +94,7 @@ public:
     {
         PlayingCard pickedCard;
         if (cards.empty()) {
-            throw std::runtime_error("Колода пуста!");
+            throw std::runtime_error("пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ!");
         }
 
         while (true) {
@@ -122,7 +106,7 @@ public:
                 cards[index].setIsUsing(true);
                 break;
             }
-           
+
         }
 
         return pickedCard;
@@ -141,7 +125,7 @@ public:
         case 4:
             return Suit::Clubs;
         default:
-            throw std::invalid_argument("Недопустимый номер для масти.");
+            throw std::invalid_argument("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.");
         }
     }
 };

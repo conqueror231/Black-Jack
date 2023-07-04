@@ -13,6 +13,10 @@ public:
 		return hand->GetCardInstance();
 
 	}
+	int GetMoney() {
+		return money;
+
+	}
 
 
 	Player(int money_)
@@ -26,9 +30,12 @@ public:
 	}
 
 	void setStanding() { isStanding = true; };
-	void Bet(int money, Bank bank) {
+	void Bet(int money_, Bank bank) {
 
-		bank.SendMoney(money);
+		
+		bank.SendMoney(money_);
+		money -= money_;
+		
 	}
 
 	void TakeCardToHand() {

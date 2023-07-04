@@ -49,18 +49,9 @@ public:
     {
         player.ClearHand();
     }
-
-    void DealCards(Dealer& dealer){
-        while (hand->GetScore().first < 17)
-        {
-                DealCards(dealer, 1);
-                if (hand->GetScore().first > 21 && hand->GetScore().second != 21) {
-                    isBusted = true;
-                    break;
-                }
-        }
-        
-    
+    void setBusted() {
+        isBusted = true;
     }
+   
 
 };

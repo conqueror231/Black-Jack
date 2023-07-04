@@ -81,9 +81,9 @@
     <ExternalIncludePath>E:\black jack\SDL2_ttf-devel-2.20.2-VC\SDL2_ttf-2.20.2\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\black jack\SDL2_ttf-devel-2.20.2-VC\SDL2_ttf-2.20.2\lib\x64;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;$(LibraryPath)</LibraryPath>
-    <ExternalIncludePath>E:\black jack\SDL2_ttf-devel-2.20.2-VC\SDL2_ttf-2.20.2\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <IncludePath>E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\lib\x64;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\include;$(IncludePath)</IncludePath>
@@ -130,7 +130,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
