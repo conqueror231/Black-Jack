@@ -164,8 +164,8 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
 
         if (betStage) {
-          //SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
-            SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+          SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+           // SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             
             SDL_Texture* moneyToBetTexture = nullptr;
             ShowText({ 0,0,225 }, { std::to_string(moneyToBet).c_str() }, moneyToBetTexture);
@@ -182,7 +182,8 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
             SDL_FreeSurface(surface);
         }
         if (hitOrStandStage) {
-            SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+            //SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             if (surface == nullptr)
                 std::cout << "qweqwe";
 
@@ -307,7 +308,10 @@ int main(int argc, char* argv[])
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, buttonRect)) {
-                        player.Bet(moneyToBet);
+
+                        
+                        Bank::GetInstance().SendMoney(moneyToBet, player);
+
                         std::cout << "Player money:" << player.GetMoney() << std::endl;
                         betStage = false;
                         startCardsStage = true;
@@ -411,6 +415,7 @@ int main(int argc, char* argv[])
 
         }
 
+
         if (winDefindingStage)
         {
 
@@ -423,26 +428,33 @@ int main(int argc, char* argv[])
             if (dealer.ShowScore().second == 21)
                 dealerScore = dealer.ShowScore().second;
 
+
             std::cout << "player score:" << playerScore << std::endl;
             std::cout << "dealer score:" << dealerScore << std::endl;
+            if (playerScore > 21) {
 
-            if (player.GetBusted() == false)
-            {
+                std::cout << "player lost (playerScore > 21)" << std::endl;
 
-                if (dealer.GetBusted()) {
-                    std::cout << "player won";
-                    winDefindingStage = false;
-                }
-
-
-                if (playerScore > dealerScore && dealer.GetBusted() == false) {
-                    std::cout << "player won";
-                }
-                if (dealerScore > playerScore && dealer.GetBusted() == false)
-                    std::cout << "dealer won";
             }
-            else
-                std::cout << "player lost" << std::endl;
+            if (dealerScore > 21) {
+                std::cout << "dealer lost (dealer > 21)" << std::endl;
+              
+            }
+
+            if (dealerScore == playerScore) {
+                std::cout << "draw" << std::endl;
+            }
+
+
+            if (playerScore > dealerScore && playerScore < 22)
+            {
+                Bank::GetInstance().GiveMoney(moneyToBet, player);
+                std::cout << "player won (playerScore > dealerScore) ";
+                std::cout << "Player money:" << player.GetMoney() << std::endl;
+            }
+          
+            
+
 
         }
 
@@ -466,8 +478,8 @@ int main(int argc, char* argv[])
 void ShowText(SDL_Color color, const char* text,SDL_Texture*& texture) {
 
    
-   // TTF_Font* font = TTF_OpenFont("E:/lazy.ttf", 30); 
-    TTF_Font* font = TTF_OpenFont("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/lazy.ttf", 30);
+    TTF_Font* font = TTF_OpenFont("E:/lazy.ttf", 30); 
+   // TTF_Font* font = TTF_OpenFont("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/lazy.ttf", 30);
     SDL_Color textColor = color;
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, textColor);
     texture = SDL_CreateTextureFromSurface(renderer, textSurface);

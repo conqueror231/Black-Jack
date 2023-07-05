@@ -1,6 +1,7 @@
 #pragma once
 #include"Hand.h"
-#include"Bank.h"
+
+
 class Player
 {
 private:
@@ -13,9 +14,12 @@ public:
 		return hand->GetCardInstance();
 
 	}
+
 	int GetMoney() {
 		return money;
-
+	}
+	void TakeMoney(int money_) {
+		money += money_;
 	}
 
 
@@ -30,12 +34,12 @@ public:
 	}
 
 	void setStanding() { isStanding = true; };
-	void Bet(int money_) {
 
-		
-		Bank::GetInstance().SendMoney(money_);
+
+	void BetMoney(int money_) {
+
 		money -= money_;
-		
+
 	}
 
 	void TakeCardToHand() {
