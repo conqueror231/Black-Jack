@@ -87,20 +87,17 @@ public:
  };
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath) {
-
-
-    // TTF_Font* font = TTF_OpenFont("E:/lazy.ttf", 30);
     TTF_Font* font = TTF_OpenFont(fontPath.c_str(), 30);
     SDL_Color textColor = color;
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
-    SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, textSurface), nullptr, &place);
+    SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+    SDL_RenderCopy(renderer, textTexture, nullptr, &place);
+
+    SDL_DestroyTexture(textTexture);
     SDL_FreeSurface(textSurface);
-    textSurface = nullptr;
-
     TTF_CloseFont(font);
-    font = nullptr;
-
 }
+
 
 double x = 1, y = 1;
 
@@ -183,7 +180,7 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
            // SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             
           
-          //  ShowText({ 0,0,225 }, { std::to_string(moneyToBet).c_str() }, moneyToBetTexture);
+       
             ShowText(std::to_string(moneyToBet), moneyToBetRect, { 0,0,0 }, "E:/lazy.ttf");
 
             if (surface == nullptr)
