@@ -14,7 +14,7 @@
 #include<fstream>
 #include <cstdlib>
 
-void ShowText(SDL_Color color, const char* text, SDL_Texture*& texture);
+void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
 const int WINDOW_WIDTH = 900;
 const int WINDOW_HEIGHT = 600;
@@ -86,6 +86,21 @@ public:
 
  };
 
+void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath) {
+
+
+    // TTF_Font* font = TTF_OpenFont("E:/lazy.ttf", 30);
+    TTF_Font* font = TTF_OpenFont(fontPath.c_str(), 30);
+    SDL_Color textColor = color;
+    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+    SDL_RenderCopy(renderer, SDL_CreateTextureFromSurface(renderer, textSurface), nullptr, &place);
+    SDL_FreeSurface(textSurface);
+    textSurface = nullptr;
+
+    TTF_CloseFont(font);
+    font = nullptr;
+
+}
 
 double x = 1, y = 1;
 
@@ -122,31 +137,24 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
         MoveCard();
         //player score
-        SDL_Texture* HandScoreTexture = nullptr;
-
+        
         if (player.ShowScore().second == 21)
             text = std::to_string(player.ShowScore().second);
         text = std::to_string(player.ShowScore().first);
 
         SDL_Rect HandScore { destinationRectForPlayer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForPlayer.y, 100, 100};
-        ShowText({ 0,0,0 }, { text.c_str()}, HandScoreTexture);
-
        
-        SDL_RenderCopy(renderer, HandScoreTexture, nullptr, &HandScore);
-        SDL_DestroyTexture(HandScoreTexture);
+        ShowText(text, HandScore, {0,0,0}, "E:/lazy.ttf");
+       
 
         //dealer score
-        
+     
         if (dealer.ShowScore().second == 21)
             text = std::to_string(dealer.ShowScore().second);
         text = std::to_string(dealer.ShowScore().first);
 
-      
         SDL_Rect HandScoreDealer{ destinationRectForDealer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForDealer.y, 100, 100 };
-        ShowText({ 0,0,0 }, { text.c_str() }, HandScoreTexture);
-
-        SDL_RenderCopy(renderer, HandScoreTexture, nullptr, &HandScoreDealer);
-        SDL_DestroyTexture(HandScoreTexture);
+        ShowText(text, HandScoreDealer, { 0,0,0 }, "E:/lazy.ttf");
 
 
 
@@ -154,40 +162,32 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
         SDL_Texture* totalBankMoneyTexture = nullptr;
         text = "Bank:";
         text.append(std::to_string(Bank::GetInstance().GetTotalMoney()).c_str());
-        ShowText({ 200,49,0 }, { text.c_str() }, totalBankMoneyTexture);
 
-        SDL_RenderCopy(renderer, totalBankMoneyTexture, nullptr, &totalBankMoneyRect);
-        SDL_DestroyTexture(totalBankMoneyTexture);
+        ShowText(text, totalBankMoneyRect, { 0,0,0 }, "E:/lazy.ttf");
 
         //Player Money
         text = "Money: ";
         text.append(std::to_string(player.GetMoney()));
-        SDL_Texture* PlayerMoneyTexture = nullptr;
-        SDL_Rect PlayerMoney{ destinationRectForPlayer.x - 100, destinationRectForPlayer.y, 150, 60 };
-        ShowText({ 200,49,0 }, { text.c_str() }, PlayerMoneyTexture);
-        SDL_RenderCopy(renderer, PlayerMoneyTexture, nullptr, &PlayerMoney);
-
-        SDL_DestroyTexture(PlayerMoneyTexture);
+   
+        SDL_Rect PlayerMoney{ destinationRectForPlayer.x - 150, destinationRectForPlayer.y, 150, 60 };
+        ShowText(text, PlayerMoney, { 0,0,0 }, "E:/lazy.ttf");
         
       
-
-
         if (betStage) {
           SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
            // SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             
-            SDL_Texture* moneyToBetTexture = nullptr;
-            ShowText({ 0,0,225 }, { std::to_string(moneyToBet).c_str() }, moneyToBetTexture);
+          
+          //  ShowText({ 0,0,225 }, { std::to_string(moneyToBet).c_str() }, moneyToBetTexture);
+            ShowText(std::to_string(moneyToBet), moneyToBetRect, { 0,0,0 }, "E:/lazy.ttf");
 
             if (surface == nullptr)
-                std::cout << "qweqwe";
+                std::cout << "Surface didnt load" << std::endl;
 
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &buttonRect);
             SDL_DestroyTexture(buttonTexture);
-            
-            SDL_RenderCopy(renderer, moneyToBetTexture, nullptr, &moneyToBetRect);
-            SDL_DestroyTexture(moneyToBetTexture);
+           
             SDL_FreeSurface(surface);
         }
         if (hitOrStandStage) {
@@ -297,7 +297,7 @@ int main(int argc, char* argv[])
     std::this_thread::sleep_for(std::chrono::milliseconds(0)); // ~60 FPS
 
 
-    SDL_SetRenderDrawColor(renderer, 0, 0, 100, 100);
+    SDL_SetRenderDrawColor(renderer, 0, 183, 0, 255);
     SDL_RenderClear(renderer);
 
 
@@ -510,21 +510,7 @@ int main(int argc, char* argv[])
 
 }
 
-void ShowText(SDL_Color color, const char* text,SDL_Texture*& texture) {
 
-   
-    TTF_Font* font = TTF_OpenFont("E:/lazy.ttf", 30); 
-   // TTF_Font* font = TTF_OpenFont("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/lazy.ttf", 30);
-    SDL_Color textColor = color;
-    SDL_Surface* textSurface = TTF_RenderText_Solid(font, text, textColor);
-    texture = SDL_CreateTextureFromSurface(renderer, textSurface);
-
-    SDL_FreeSurface(textSurface);
-    textSurface = nullptr;
-
-    TTF_CloseFont(font);
-    font = nullptr;
-}
 
 
 
