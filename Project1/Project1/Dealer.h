@@ -9,6 +9,12 @@ private:
     Hand *hand = new Hand;
     bool isBusted = false;
 public:
+    void Reload() {
+        hand->Reload();
+        isBusted = false;
+
+    }
+
     bool GetBusted() const {
         return isBusted;
     };

@@ -9,7 +9,21 @@ private:
 	int money;
 	bool isStanding = false;
 	bool isBusted = false;
+	bool Lost = false;
 public:
+	bool GetLost() {
+		return Lost;
+	}
+	bool SetLost() {
+		return Lost;
+	}
+	void Reload() {
+		hand->Reload();
+		isStanding = false;
+		isBusted = false;
+
+	}
+
 	std::vector<PlayingCard>* GetCardInstance() {
 		return hand->GetCardInstance();
 

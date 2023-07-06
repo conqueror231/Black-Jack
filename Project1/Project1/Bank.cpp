@@ -6,5 +6,6 @@ void Bank::ShowTotalMoney() const {
 }
 
 void Bank::GiveMoney(int money, Player& player) {
+	totalMoney -= money;
 	player.TakeMoney(money * 2);
 }

@@ -110,7 +110,6 @@ SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
 SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
 
 
-
 int moneyToBet = 100;
 void RenderThreadFunction(SDL_Renderer* renderer) {
     while (true) {
@@ -160,7 +159,17 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
         SDL_RenderCopy(renderer, totalBankMoneyTexture, nullptr, &totalBankMoneyRect);
         SDL_DestroyTexture(totalBankMoneyTexture);
 
+        //Player Money
+        text = "Money: ";
+        text.append(std::to_string(player.GetMoney()));
+        SDL_Texture* PlayerMoneyTexture = nullptr;
+        SDL_Rect PlayerMoney{ destinationRectForPlayer.x - 100, destinationRectForPlayer.y, 150, 60 };
+        ShowText({ 200,49,0 }, { text.c_str() }, PlayerMoneyTexture);
+        SDL_RenderCopy(renderer, PlayerMoneyTexture, nullptr, &PlayerMoney);
 
+        SDL_DestroyTexture(PlayerMoneyTexture);
+        
+      
 
 
         if (betStage) {
@@ -203,7 +212,7 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
         int time = 0;
         for (auto& it: Textures) {
             if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
-                
+               
                 if(lastDealersCardMustBeShown)
                     SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
                 else
@@ -293,6 +302,7 @@ int main(int argc, char* argv[])
 
 
     bool takeCard = false;
+    bool waitToEndCardsMoving = false;
 
     while (isRunning) {
 
@@ -364,7 +374,13 @@ int main(int argc, char* argv[])
 
 
         if (betStage) {
-            continue;
+            
+            if (player.GetMoney() == 0) {
+                std::cout << "Player dont have money";
+                player.SetLost();
+                betStage = false;
+            }
+       
         }
 
         if (startCardsStage) {
@@ -432,16 +448,12 @@ int main(int argc, char* argv[])
             std::cout << "player score:" << playerScore << std::endl;
             std::cout << "dealer score:" << dealerScore << std::endl;
             if (playerScore > 21) {
-
                 std::cout << "player lost (playerScore > 21)" << std::endl;
-
             }
             if (dealerScore > 21) {
                 std::cout << "dealer lost (dealer > 21)" << std::endl;
-              
             }
-
-            if (dealerScore == playerScore) {
+           if (dealerScore == playerScore) {
                 std::cout << "draw" << std::endl;
             }
 
@@ -454,12 +466,35 @@ int main(int argc, char* argv[])
             }
           
             
-
-
+            winDefindingStage = false;
+            waitToEndCardsMoving = true;
+            
         }
 
-        winDefindingStage = false;
+      
+      
+       
+        if (waitToEndCardsMoving) {
+                if (indexTexture + 1 == (PlayerCardIndex + DealerCardIndex)) {
+                    std::cout << "  " << indexTexture + 1 << ' ' << PlayerCardIndex + DealerCardIndex << std::endl;
+                if (isMoving == false) {
+                    winDefindingStage = false;
+                    betStage = true;
+                    Rects.clear();
+                    Textures.clear();
+                    PlayerCardIndex = 0;
+                    DealerCardIndex = 0;
+                    moneyToBet = 100;
+                    indexTexture = 0;
 
+                    player.Reload();
+                    dealer.Reload();
+                    waitToEndCardsMoving = false;
+                    lastDealersCardMustBeShown = false;
+                    isMoving = true;
+                }
+            }
+        }
     }
 
 

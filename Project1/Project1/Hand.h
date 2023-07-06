@@ -10,6 +10,12 @@ private:
 	std::vector <PlayingCard> cards;
 
 public:
+	void Reload() {
+		score = 0;
+		secondScore = 0;
+		cards.clear();
+	}
+
 	std::vector<PlayingCard>* GetCardInstance() {
 		return &cards;
 		
