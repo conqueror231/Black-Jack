@@ -109,6 +109,8 @@ void MoveCard();
 bool isMoving = true;
 int indexTexture = 0;
 bool isRunning = true;
+
+#pragma region Bools for stages
 bool betStage = true;
 bool startCardsStage = false;
 bool hitOrStandStage = false;
@@ -116,6 +118,9 @@ bool dealerLogicStage = false;
 bool winDefindingStage = false;
 
 bool lastDealersCardMustBeShown = false;
+#pragma endregion
+
+#pragma region Rects for interface
 
 SDL_Rect buttonRect = { 10, 500, 60, 60 };
 SDL_Rect hitButtonRect = { 800, 400, 60, 60 };
@@ -123,7 +128,7 @@ SDL_Rect stayButtonRect = { 800, 500, 60, 60 };
 
 SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
 SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
-
+#pragma endregion
 
 int moneyToBet = 100;
 void RenderThreadFunction(SDL_Renderer* renderer) {
@@ -286,9 +291,6 @@ int main(int argc, char* argv[])
 
     dispenser disp;
 
-
-
-
     SDL_Rect StartRect{ 500, 200, 150, 200 };
 
 
@@ -431,7 +433,6 @@ int main(int argc, char* argv[])
 
         }
 
-
         if (winDefindingStage)
         {
 
@@ -447,15 +448,12 @@ int main(int argc, char* argv[])
 
             std::cout << "player score:" << playerScore << std::endl;
             std::cout << "dealer score:" << dealerScore << std::endl;
-            if (playerScore > 21) {
-                std::cout << "player lost (playerScore > 21)" << std::endl;
-            }
-            if (dealerScore > 21) {
-                std::cout << "dealer lost (dealer > 21)" << std::endl;
-            }
+         
            if (dealerScore == playerScore) {
                 std::cout << "draw" << std::endl;
+                Bank::GetInstance().GiveMoney(moneyToBet/2, player);
             }
+
 
 
             if (playerScore > dealerScore && playerScore < 22)
@@ -464,19 +462,20 @@ int main(int argc, char* argv[])
                 std::cout << "player won (playerScore > dealerScore) ";
                 std::cout << "Player money:" << player.GetMoney() << std::endl;
             }
-          
+            if (playerScore < 22 && dealerScore > 21)
+            {
+                std::cout << "dealer lost (dealer > 21)" << std::endl;
+                Bank::GetInstance().GiveMoney(moneyToBet, player);
+            }
             
             winDefindingStage = false;
             waitToEndCardsMoving = true;
             
         }
-
       
-      
-       
         if (waitToEndCardsMoving) {
                 if (indexTexture + 1 == (PlayerCardIndex + DealerCardIndex)) {
-                    std::cout << "  " << indexTexture + 1 << ' ' << PlayerCardIndex + DealerCardIndex << std::endl;
+                
                 if (isMoving == false) {
                     winDefindingStage = false;
                     betStage = true;
@@ -489,9 +488,11 @@ int main(int argc, char* argv[])
 
                     player.Reload();
                     dealer.Reload();
+                    Bank::GetInstance().ReloadBank();
                     waitToEndCardsMoving = false;
                     lastDealersCardMustBeShown = false;
                     isMoving = true;
+                    
                 }
             }
         }

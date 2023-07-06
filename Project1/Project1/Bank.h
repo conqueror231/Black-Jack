@@ -24,5 +24,10 @@ public:
 		}
 	void GiveMoney(int money, Player& player);
 	
+	void ReloadBank() {
+		totalMoney = 0;
+	}
 
 	};
+
+	
