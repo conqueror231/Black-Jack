@@ -1,63 +1,41 @@
 #pragma once
-#include "Player.h"
+#include "BasePlayer.h"
 #include "Hand.h"
 #include "Deck.h"
+#include "Player.h"
 
-class Dealer
+class Dealer : public BasePlayer
 {
-private:
-    Hand *hand = new Hand;
-    bool isBusted = false;
 public:
-    void Reload() {
-        hand->Reload();
-        isBusted = false;
+	void Reload()
+	{
+		hand->Reload();
+		isBusted = false;
+	}
 
-    }
+	void DealCards(Player& player, int numCards)
+	{
+		for (int i = 0; i < numCards; i++)
+		{
+			player.TakeCardToHand();
+		}
+	}
 
-    bool GetBusted() const {
-        return isBusted;
-    };
+	void DealCards(Dealer& dealer, int numCards)
+	{
+		for (int i = 0; i < numCards; i++)
+		{
+			hand->TakeCard();
+		}
+	}
 
-    std::vector<PlayingCard>* GetCardInstance() {
-        return hand->GetCardInstance();
+	void CollectCards(Player& player)
+	{
+		player.ClearHand();
+	}
 
-    }
-
-    std::pair<int,int> ShowScore() const {
-        return hand->GetScore();
-    }
-
-    void ShowHand() const {
-        hand->ShowHand();
-    }
-
-
-    void DealCards(Player& player, int numCards)
-    {
-        for (int i = 0; i < numCards; i++)
-        {
-            player.TakeCardToHand();
-        }
-    }
-
-    void DealCards(Dealer& dealer, int numCards)
-    {
-        for (int i = 0; i < numCards; i++)
-        {
-            hand->TakeCard();
-           
-        }
-    }
-
-
-    void CollectCards(Player& player)
-    {
-        player.ClearHand();
-    }
-    void setBusted() {
-        isBusted = true;
-    }
-   
-
+	void SetBusted()
+	{
+		isBusted = true;
+	}
 };

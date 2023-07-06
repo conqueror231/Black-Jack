@@ -1,81 +1,59 @@
 #pragma once
-#include"Hand.h"
+#include"BasePlayer.h"
 
-
-class Player
+class Player : public BasePlayer
 {
 private:
-	Hand *hand = new Hand;
 	int money;
 	bool isStanding = false;
-	bool isBusted = false;
 	bool Lost = false;
+
 public:
-	bool GetLost() {
+	Player(int money_) : money(money_) {}
+
+	void SetLost(bool lost) {
+		Lost = lost;
+		
+	}
+
+	bool GetLost()
+	{
 		return Lost;
 	}
-	bool SetLost() {
-		return Lost;
-	}
-	void Reload() {
+
+	void Reload()
+	{
 		hand->Reload();
 		isStanding = false;
 		isBusted = false;
-
+		Lost = false;
 	}
 
-	std::vector<PlayingCard>* GetCardInstance() {
-		return hand->GetCardInstance();
-
-	}
-
-	int GetMoney() {
+	int GetMoney() const
+	{
 		return money;
 	}
-	void TakeMoney(int money_) {
+
+	void TakeMoney(int money_)
+	{
 		money += money_;
 	}
 
+	
 
-	Player(int money_)
-		: money(money_)
+	bool GetStanding() const
 	{
-
-	}
-
-	bool getStanding() {
 		return isStanding;
 	}
 
-	void setStanding() { isStanding = true; };
+	void SetStanding()
+	{
+		isStanding = true;
+	}
 
-
-	void BetMoney(int money_) {
-
+	void BetMoney(int money_)
+	{
 		money -= money_;
-
 	}
-
-	void TakeCardToHand() {
-		hand->TakeCard();
-	}
-	void ClearHand() {
-		hand->ClearHand();
-	}
-
-	void ShowHand() const {
-		hand->ShowHand();
-	}
-	void SetBusted() {
-		isBusted = true;
-	}
-	bool GetBusted() {
-		return isBusted;
-	}
-	std::pair<int,int> ShowScore() const {
-		return hand->GetScore();
-	}
-
 
 };
-

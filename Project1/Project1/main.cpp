@@ -41,50 +41,47 @@ short int DealerCardIndex = 0;
 
 class dispenser {
 public:
-    void TakeCard(Player player_, int countOfCards_) {
-        dealer.DealCards(player_, countOfCards_);
+    void TakeCard(Player& player, int countOfCards_) {
+        dealer.DealCards(player, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair< SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForPlayer.x + 30 * PlayerCardIndex , destinationRectForPlayer.y,150,200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, 150, 200 });
 
             Rects.push_back(temp);
             Textures.push_back(playerCardsPtr->at(PlayerCardIndex).GetTexture());
             PlayerCardIndex++;
 
         }
+    }
 
-    };
-    void TakeCard(Dealer dealer_, int countOfCards_) {
-        dealer.DealCards(dealer_, countOfCards_);
+    void TakeCard(Dealer& dealer, int countOfCards_) {
+        dealer.DealCards(dealer, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair< SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150,200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
         }
+    }
 
-    };
-    void DealerLogic(Dealer dealer_) {
-            
+    void DealerLogic(Dealer& dealer) {
         while (dealer.ShowScore().first < 17) {
             dealer.DealCards(dealer, 1);
-            
-         
-            std::pair< SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150,200 });
+
+            std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
 
             if (dealer.ShowScore().first > 21 && dealer.ShowScore().second != 21) {
-                dealer.setBusted();
+                dealer.SetBusted();
                 break;
             }
-        
         }
     }
+};
 
- };
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath) {
     TTF_Font* font = TTF_OpenFont(fontPath.c_str(), 30);
@@ -277,19 +274,14 @@ int main(int argc, char* argv[])
     deck.InitDeck();
 
 
-
     playerCardsPtr = player.GetCardInstance();
     dealerCardsPtr = dealer.GetCardInstance();
 
-
-
-    
     SDL_Event event;
 
     dispenser disp;
 
     SDL_Rect StartRect{ 500, 200, 150, 200 };
-
 
     std::thread renderThread(RenderThreadFunction, renderer);
     
@@ -376,7 +368,7 @@ int main(int argc, char* argv[])
             
             if (player.GetMoney() == 0) {
                 std::cout << "Player dont have money";
-                player.SetLost();
+                player.SetLost(true);
                 betStage = false;
             }
        
@@ -391,7 +383,7 @@ int main(int argc, char* argv[])
 
         if (hitOrStandStage) {
 
-            if (player.getStanding())
+            if (player.GetStanding())
             {
                 hitOrStandStage = false;
                 dealerLogicStage = true;

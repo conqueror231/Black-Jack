@@ -36,6 +36,9 @@
     <ClCompile Include="Dealer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BasePlayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PlayingCard.h">
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dealer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BasePlayer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
