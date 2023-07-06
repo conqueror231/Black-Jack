@@ -12,14 +12,14 @@ private:
 	short int cardScore;
 	Suit suit;
 	bool isUsing = false;
-	SDL_Surface* textureFront = nullptr;
-	SDL_Surface* textureBack = nullptr;
-	
+	SDL_Texture* textureFront = nullptr;
+	SDL_Texture* textureBack = nullptr;
+
 public:
 
 
 	
-	std::pair<SDL_Surface*, SDL_Surface* > GetSurfaces(){
+	std::pair<SDL_Texture*, SDL_Texture* > GetTexture(){
 		
 		return std::make_pair(textureFront, textureBack);
 	}
@@ -30,7 +30,7 @@ public:
 	{}
 
 
-	PlayingCard(short int cardScore_, SDL_Surface* textureFront_, SDL_Surface* textureBack_)
+	PlayingCard(short int cardScore_, SDL_Texture* textureFront_, SDL_Texture* textureBack_)
 		: cardScore(cardScore_), textureFront(textureFront_), textureBack(textureBack_)
 	{}
 
