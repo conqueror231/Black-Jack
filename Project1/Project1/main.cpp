@@ -48,7 +48,9 @@ public:
             std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, 150, 200 });
 
             Rects.push_back(temp);
-            Textures.push_back(playerCardsPtr->at(PlayerCardIndex).GetTexture());
+            Textures.push_back( std::make_pair(
+                                                SDL_CreateTextureFromSurface(renderer, playerCardsPtr->at(PlayerCardIndex).GetSurfaces().first),
+                                                SDL_CreateTextureFromSurface(renderer, playerCardsPtr->at(PlayerCardIndex).GetSurfaces().second)));
             PlayerCardIndex++;
 
         }
@@ -60,7 +62,9 @@ public:
         for (int i = 0; i < countOfCards_; i++) {
             std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
             Rects.push_back(temp);
-            Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
+            Textures.push_back(std::make_pair(
+                SDL_CreateTextureFromSurface(renderer, dealerCardsPtr->at(PlayerCardIndex).GetSurfaces().first),
+                SDL_CreateTextureFromSurface(renderer, dealerCardsPtr->at(PlayerCardIndex).GetSurfaces().second)));
             DealerCardIndex++;
         }
     }
@@ -71,7 +75,9 @@ public:
 
             std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
             Rects.push_back(temp);
-            Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
+            Textures.push_back(std::make_pair(
+                SDL_CreateTextureFromSurface(renderer, dealerCardsPtr->at(PlayerCardIndex).GetSurfaces().first),
+                SDL_CreateTextureFromSurface(renderer, dealerCardsPtr->at(PlayerCardIndex).GetSurfaces().second)));
             DealerCardIndex++;
 
             if (dealer.ShowScore().first > 21 && dealer.ShowScore().second != 21) {
@@ -142,7 +148,6 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
         text = std::to_string(player.ShowScore().first);
 
         SDL_Rect HandScore { destinationRectForPlayer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForPlayer.y, 100, 100};
-       
         ShowText(text, HandScore, {0,0,0}, "E:/lazy.ttf");
        
 
@@ -210,15 +215,14 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
   
         int time = 0;
         for (auto& it: Textures) {
-            if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
+           
                
                 if(lastDealersCardMustBeShown)
                     SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
                 else
                     SDL_RenderCopy(renderer, Textures[time].second, nullptr, &Rects[time].first);
-            }
-            else
-                SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
+            
+         
 
                
             if (time == indexTexture)
@@ -306,6 +310,8 @@ int main(int argc, char* argv[])
             if (betStage == true)
             {
                 if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+                   
+
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, buttonRect)) {
