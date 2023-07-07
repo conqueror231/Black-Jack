@@ -136,18 +136,18 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
         MoveCard();
         //player score
-        
+
         if (player.ShowScore().second == 21)
             text = std::to_string(player.ShowScore().second);
         text = std::to_string(player.ShowScore().first);
 
-        SDL_Rect HandScore { destinationRectForPlayer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForPlayer.y, 100, 100};
-       
-        ShowText(text, HandScore, {0,0,0}, "E:/lazy.ttf");
-       
+        SDL_Rect HandScore{ destinationRectForPlayer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForPlayer.y, 100, 100 };
+
+        ShowText(text, HandScore, { 0,0,0 }, "E:/lazy.ttf");
+
 
         //dealer score
-     
+
         if (dealer.ShowScore().second == 21)
             text = std::to_string(dealer.ShowScore().second);
         text = std::to_string(dealer.ShowScore().first);
@@ -167,17 +167,17 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
         //Player Money
         text = "Money: ";
         text.append(std::to_string(player.GetMoney()));
-   
+
         SDL_Rect PlayerMoney{ destinationRectForPlayer.x - 150, destinationRectForPlayer.y, 150, 60 };
         ShowText(text, PlayerMoney, { 0,0,0 }, "E:/lazy.ttf");
-        
-      
+
+
         if (betStage) {
-          SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
-           // SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
-            
-          
-       
+            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+            // SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+
+
+
             ShowText(std::to_string(moneyToBet), moneyToBetRect, { 0,0,0 }, "E:/lazy.ttf");
 
             if (surface == nullptr)
@@ -186,7 +186,7 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &buttonRect);
             SDL_DestroyTexture(buttonTexture);
-           
+
             SDL_FreeSurface(surface);
         }
         if (hitOrStandStage) {
@@ -203,16 +203,16 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
             SDL_DestroyTexture(buttonTexture);
             SDL_FreeSurface(surface);
 
-            
-            
+
+
         }
 
-  
+
         int time = 0;
-        for (auto& it: Textures) {
+        for (auto& it : Textures) {
             if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
-               
-                if(lastDealersCardMustBeShown)
+
+                if (lastDealersCardMustBeShown)
                     SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
                 else
                     SDL_RenderCopy(renderer, Textures[time].second, nullptr, &Rects[time].first);
@@ -220,14 +220,14 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
             else
                 SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
 
-               
+
             if (time == indexTexture)
                 break;
             time++;
         }
         time = 0;
 
-        
+
         // Оновлення відображення
         SDL_RenderPresent(renderer);
         if (isMoving == false) {
@@ -239,8 +239,8 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
 
         }
-           
-     
+
+
 
     }
 }
@@ -284,7 +284,7 @@ int main(int argc, char* argv[])
     SDL_Rect StartRect{ 500, 200, 150, 200 };
 
     std::thread renderThread(RenderThreadFunction, renderer);
-    
+
     std::this_thread::sleep_for(std::chrono::milliseconds(0)); // ~60 FPS
 
 
@@ -310,7 +310,7 @@ int main(int argc, char* argv[])
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, buttonRect)) {
 
-                        
+
                         Bank::GetInstance().SendMoney(moneyToBet, player);
 
                         std::cout << "Player money:" << player.GetMoney() << std::endl;
@@ -365,13 +365,13 @@ int main(int argc, char* argv[])
 
 
         if (betStage) {
-            
+
             if (player.GetMoney() == 0) {
                 std::cout << "Player dont have money";
                 player.SetLost(true);
                 betStage = false;
             }
-       
+
         }
 
         if (startCardsStage) {
@@ -437,10 +437,10 @@ int main(int argc, char* argv[])
 
             std::cout << "player score:" << playerScore << std::endl;
             std::cout << "dealer score:" << dealerScore << std::endl;
-         
-           if (dealerScore == playerScore) {
+
+            if (dealerScore == playerScore) {
                 std::cout << "draw" << std::endl;
-                Bank::GetInstance().GiveMoney(moneyToBet/2, player);
+                Bank::GetInstance().GiveMoney(moneyToBet / 2, player);
             }
 
 
@@ -456,15 +456,15 @@ int main(int argc, char* argv[])
                 std::cout << "dealer lost (dealer > 21)" << std::endl;
                 Bank::GetInstance().GiveMoney(moneyToBet, player);
             }
-            
+
             winDefindingStage = false;
             waitToEndCardsMoving = true;
-            
+
         }
-      
+
         if (waitToEndCardsMoving) {
-                if (indexTexture + 1 == (PlayerCardIndex + DealerCardIndex)) {
-                
+            if (indexTexture + 1 == (PlayerCardIndex + DealerCardIndex)) {
+
                 if (isMoving == false) {
                     winDefindingStage = false;
                     betStage = true;
@@ -481,7 +481,7 @@ int main(int argc, char* argv[])
                     waitToEndCardsMoving = false;
                     lastDealersCardMustBeShown = false;
                     isMoving = true;
-                    
+
                 }
             }
         }
@@ -491,7 +491,7 @@ int main(int argc, char* argv[])
 
 
 
-    
+
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);

@@ -4,7 +4,7 @@
 #include<vector>
 class Hand
 {
-private: 
+private:
 	int score;
 	int secondScore;
 	std::vector <PlayingCard> cards;
@@ -18,24 +18,24 @@ public:
 
 	std::vector<PlayingCard>* GetCardInstance() {
 		return &cards;
-		
+
 	}
 
 
 	void ShowHand() {
-		
-		 std::cout << "Cards in hand:" << std::endl;
-    for (const auto& card : cards) {
-        card.Display();
-    }
-   
+
+		std::cout << "Cards in hand:" << std::endl;
+		for (const auto& card : cards) {
+			card.Display();
+		}
+
 	}
 
 	PlayingCard TakeCard() {
 		PlayingCard pickedCard = Deck::GetInstance().pickCard();
 
-		
-		
+
+
 		cards.push_back(pickedCard);
 
 		score += pickedCard.GetScore();
@@ -55,10 +55,9 @@ public:
 		}
 	}
 
-	std::pair<int,int> GetScore() const {
+	std::pair<int, int> GetScore() const {
 		std::pair<int, int> temp(score, secondScore);
 		return temp;
 	}
 
 };
-
