@@ -14,7 +14,7 @@
 #include<fstream>
 #include <cstdlib>
 #include <mutex>
-
+#include <chrono>
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
@@ -99,11 +99,11 @@ void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fo
     TTF_Font* font = TTF_OpenFont(fontPath.c_str(), 30);
     SDL_Color textColor = color;
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
-    rendererMutex.lock();
+   // rendererMutex.lock();
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     SDL_RenderCopy(renderer, textTexture, nullptr, &place);
-    rendererMutex.unlock();
+   // rendererMutex.unlock();
     SDL_DestroyTexture(textTexture);
     SDL_FreeSurface(textSurface);
     TTF_CloseFont(font);
@@ -146,6 +146,9 @@ bool need = false;
 
 void RenderThreadFunction() {
     while (true) {
+
+      
+        auto startTime = std::chrono::high_resolution_clock::now();
         std::string text;
 
         if (isRunning == false)
@@ -205,7 +208,7 @@ void RenderThreadFunction() {
             if (surface == nullptr)
                 std::cout << "Surface didnt load" << std::endl;
 
-            rendererMutex.lock();
+           rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &buttonRect);
             rendererMutex.unlock();
@@ -215,19 +218,21 @@ void RenderThreadFunction() {
 
             SDL_FreeSurface(surface);
         }
+       // std::cout << "preHitStage" << std::endl;
         if (hitOrStandStage) {
+            std::cout << "hitStage" << std::endl;
             //SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             if (surface == nullptr)
                 std::cout << "qweqwe";
 
-            rendererMutex.lock();
+           // rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
          
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &hitButtonRect);
 
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &stayButtonRect);
-            rendererMutex.unlock();
+          //  rendererMutex.unlock();
             SDL_DestroyTexture(buttonTexture);
             SDL_FreeSurface(surface);
 
@@ -238,7 +243,7 @@ void RenderThreadFunction() {
 
         int time = 0;
         for (auto& it : Textures) {
-            rendererMutex.lock();
+        //    rendererMutex.lock();
             if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
                 
                 if (lastDealersCardMustBeShown)
@@ -249,7 +254,7 @@ void RenderThreadFunction() {
             else
                 SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
 
-            rendererMutex.unlock();
+          //  rendererMutex.unlock();
 
             if (time == indexTexture)
                 break;
@@ -262,7 +267,7 @@ void RenderThreadFunction() {
         rendererMutex.lock();
         SDL_RenderPresent(renderer);
         rendererMutex.unlock();
-        std::cout << indexTexture <<std::endl;
+       
 
         if (isMoving == false) {
             if (indexTexture < Rects.size() - 1) {
@@ -274,7 +279,12 @@ void RenderThreadFunction() {
 
         }
 
+        auto endTime = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
+        std::cout << "Time: " << duration.count() << " ms" << std::endl;
+       
 
+       
 
     }
 }
@@ -305,7 +315,9 @@ int main(int argc, char* argv[])
 
 
     Deck& deck = Deck::GetInstance();
+    rendererMutex.lock();
     deck.SetRenderer(renderer);
+    rendererMutex.unlock();
     deck.InitDeck();
   
 
@@ -319,14 +331,15 @@ int main(int argc, char* argv[])
   
     SDL_Rect StartRect{ 500, 200, 150, 200 };
   
+
     std::thread renderThread(RenderThreadFunction);
   
     
-    
-    std::this_thread::sleep_for(std::chrono::milliseconds(0)); // ~60 FPS
 
 
+    rendererMutex.lock();
     SDL_SetRenderDrawColor(renderer, 0, 183, 0, 255);
+    rendererMutex.unlock();
    // SDL_RenderClear(renderer);
 
 
@@ -415,16 +428,14 @@ int main(int argc, char* argv[])
 
         if (startCardsStage) {
             
+            std::cout << "DealCards";
             
-
-
-               
-
-
             disp.TakeCard(dealer, 2);
             disp.TakeCard(player, 2);
+      
             startCardsStage = false;
             hitOrStandStage = true;
+         
         }
 
         if (hitOrStandStage) {

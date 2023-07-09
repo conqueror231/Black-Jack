@@ -8,7 +8,7 @@
 #include<SDL.h>
 #include<SDL_image.h>
 #include<mutex>
-
+#include<chrono>
 class Deck
 {
 
@@ -25,6 +25,13 @@ private:
 public:
     void AddCard(std::mutex& mutex)
     {
+        std::cout << "AddCard++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+        mutex.lock();
+
+        std::cout << "AddCard===================================================================================================================" <<std::endl;
+        auto startTime = std::chrono::high_resolution_clock::now();
+        std::string text;
+
         PlayingCard  cardToAdd;
         SDL_Surface* surfF,* surfB;
      
@@ -80,9 +87,15 @@ public:
 
         }
         */
-        mutex.lock();
+   
         
         cards.emplace_back(cardScoreNum, SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
+        auto endTime = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
+        std::cout << "Time DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDeck: " << duration.count() << " ms" << std::endl;
+
+
+
         mutex.unlock();
 
          
