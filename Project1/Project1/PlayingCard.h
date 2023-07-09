@@ -17,6 +17,17 @@ private:
 
 public:
 
+	void ChangeTextures(SDL_Texture* frontText, SDL_Texture* backText) {
+
+		textureFront = frontText;
+		textureBack = backText;
+	}
+
+	void DeleteTextures(){
+
+		SDL_DestroyTexture(textureFront);
+		SDL_DestroyTexture(textureBack);
+	}
 
 
 	std::pair<SDL_Texture*, SDL_Texture* > GetTexture() {

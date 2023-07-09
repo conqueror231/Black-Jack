@@ -15,6 +15,11 @@
 #include <cstdlib>
 #include <mutex>
 #include <chrono>
+#include <SDL_mixer.h>
+
+Mix_Music* gMusic = NULL;
+
+//Mix_Chunk* dealCardEffect = Mix_LoadWAV("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/cardPlacedSound.mp3");
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
@@ -45,6 +50,9 @@ std::mutex rendererMutex;
 class dispenser {
 public:
     void TakeCard(Player& player, int countOfCards_) {
+        Mix_Chunk* dealCardEffect = Mix_LoadWAV("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/cardPlacedSound.mp3");
+        Mix_PlayChannel(-1, dealCardEffect, 0);
+        Mix_Volume(-1, MIX_MAX_VOLUME / 8);
 
       for(int i = 0; i < countOfCards_; i++)
       Deck::GetInstance().AddCard(rendererMutex);
@@ -138,6 +146,7 @@ SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
 SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
 
 SDL_Rect GoToNextDealRect = { 450, 300, 100, 60 };
+SDL_Rect SwitchCardsTexturesRect = { 10, 10, 100, 60 };
 #pragma endregion
 
 int moneyToBet = 100;
@@ -196,6 +205,17 @@ void RenderThreadFunction() {
         SDL_Rect PlayerMoney{ destinationRectForPlayer.x - 150, destinationRectForPlayer.y, 150, 60 };
         ShowText(text, PlayerMoney, { 0,0,0 }, "E:/lazy.ttf");
 
+        {
+            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+             rendererMutex.lock();
+            SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
+
+            SDL_RenderCopy(renderer, buttonTexture, nullptr, &SwitchCardsTexturesRect);
+              rendererMutex.unlock();
+            SDL_DestroyTexture(buttonTexture);
+            SDL_FreeSurface(surface);
+
+        }
 
         if (betStage) {
             SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
@@ -310,13 +330,22 @@ bool isButtonPressed = false;
 int main(int argc, char* argv[])
 {
 
-
-    SDL_Init(SDL_INIT_VIDEO);
+    if (SDL_Init(SDL_INIT_VIDEO) == -1)
+    {
+        std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
+        return -1;
+    }
+   
     if (TTF_Init() == -1)
     {
-        // Помилка при ініціалізації SDL_ttf
-        std::cout << "Помилка при ініціалізації SDL_ttf: " << TTF_GetError() << std::endl;
-        return -1; // або обробіть помилку за вашими потребами
+        std::cout << "SDL could not initialize! SDL Error: " << TTF_GetError() << std::endl;
+        return -1; 
+    }
+
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    {
+        printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
+       
     }
 
 
@@ -329,7 +358,7 @@ int main(int argc, char* argv[])
     rendererMutex.lock();
     deck.SetRenderer(renderer);
     rendererMutex.unlock();
-    deck.InitDeck();
+
   
 
     playerCardsPtr = player.GetCardInstance();
@@ -356,8 +385,9 @@ int main(int argc, char* argv[])
 
     bool takeCard = false;
 
+   // gMusic = Mix_LoadMUS("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/music.mp3");
 
-  
+    Mix_PlayMusic(gMusic, -1);
     while (isRunning) {
 
         while (SDL_PollEvent(&event)) {
@@ -365,6 +395,17 @@ int main(int argc, char* argv[])
                 isRunning = false;
                 renderThread.join();
             }
+
+            if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+                int mouseX = event.button.x;
+                int mouseY = event.button.y;
+                if (PointInRect(mouseX, mouseY, SwitchCardsTexturesRect)) {
+
+                    std::cout << "sssaa";
+                    Deck::GetInstance().SwitchToAnotherTextureCards(rendererMutex);
+                }
+            }
+          
 
             if (betStage == true)
             {
@@ -563,6 +604,7 @@ int main(int argc, char* argv[])
                     player.Reload();
                     dealer.Reload();
                     Bank::GetInstance().ReloadBank();
+                    Deck::GetInstance().ReloadDeck();
 
                     waitToEndCardsMoving = false;
                     lastDealersCardMustBeShown = false;

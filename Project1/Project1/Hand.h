@@ -13,7 +13,14 @@ public:
 	void Reload() {
 		score = 0;
 		secondScore = 0;
+
+		for (auto card : cards) {
+			card.DeleteTextures();
+		}
+
 		cards.clear();
+
+
 	}
 
 	std::vector<PlayingCard>* GetCardInstance() {
