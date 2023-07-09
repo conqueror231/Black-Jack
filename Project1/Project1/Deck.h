@@ -25,80 +25,79 @@ private:
 public:
     void AddCard(std::mutex& mutex)
     {
-        std::cout << "AddCard++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++" << std::endl;
+      
         mutex.lock();
 
-        std::cout << "AddCard===================================================================================================================" <<std::endl;
-        auto startTime = std::chrono::high_resolution_clock::now();
-        std::string text;
+    /*    std::cout << "AddCard===================================================================================================================" <<std::endl;
+        auto startTime = std::chrono::high_resolution_clock::now();*/
+       
 
         PlayingCard  cardToAdd;
-        SDL_Surface* surfF,* surfB;
+        SDL_Surface* surfF, *surfB;
      
-        std::uniform_int_distribution<size_t> cardScore(2, 10);
+        std::uniform_int_distribution<size_t> cardScore(2, 14);
         std::uniform_int_distribution<size_t> cardSuit(0, 3);
-
         size_t cardScoreNum, cardSuitNum;
-        cardScoreNum = cardScore(gen);
-        cardSuitNum = cardSuit(gen);
-
-        std::string f = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" + std::to_string(cardScoreNum) + "_of_" + suits[cardSuitNum] + ".png";
-        std::string b = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
-
-        surfF = IMG_Load(f.c_str());
-        surfB = IMG_Load(b.c_str());
-
-
-        /*
         while (true) {
+            
+            cardScoreNum = cardScore(gen);
+            cardSuitNum = cardSuit(gen);
 
-        
-
-            std::uniform_int_distribution<size_t> cardScore(2, 11);
-            std::uniform_int_distribution<size_t> cardSuit(1, 4);
-
-             cardScoreNum = cardScore(gen);
-             cardSuitNum = cardSuit(gen);
-
-
-            std::string f = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" + std::to_string(cardScoreNum) + "_of_" + GetSuitStringByNumber(cardSuitNum) + ".png";
+            std::string f = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" + std::to_string(cardScoreNum) + "_of_" + suits[cardSuitNum] + ".png";
             std::string b = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
 
             surfF = IMG_Load(f.c_str());
             surfB = IMG_Load(b.c_str());
 
-            mutex.lock();
-            cardToAdd = PlayingCard(cardScoreNum, SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
-            mutex.unlock();
-
-            bool cardIsUsed = false;
+            bool cardUsed = false;
             for (auto card : cards) {
-                if (card.GetScore() == cardScoreNum && card.GetSuit() == cardToAdd.GetSuit()) {
-                    cardIsUsed = true;
+                if (card.GetScore() == cardScoreNum && FromSuitToNumber(card.GetSuit()) == cardSuitNum)
+                {
+                    cardUsed = true;
                     break;
                 }
-              
-            }
 
-            if (cardIsUsed == false) {
-                break;
             }
+            if (cardUsed == false)
+                break;
 
 
         }
-        */
-   
+
+        if (cardScoreNum > 11 && cardScoreNum != 11)
+            cardScoreNum = 10;
         
-        cards.emplace_back(cardScoreNum, SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
-        auto endTime = std::chrono::high_resolution_clock::now();
+            cards.emplace_back(cardScoreNum, SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
+
+        
+       /* auto endTime = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
-        std::cout << "Time DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDeck: " << duration.count() << " ms" << std::endl;
+        std::cout << "Time DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDeck: " << duration.count() << " ms" << std::endl;*/
 
 
 
         mutex.unlock();
 
          
+    }
+
+    int FromSuitToNumber(Suit suit_) {
+
+        switch(suit_)
+        {
+        case Suit::Clubs:{
+            return 1;
+        }
+        case Suit::Diamonds:{
+            return 2;
+        }
+        case Suit::Hearts: {
+            return 3;
+        }
+        case Suit::Spades: {
+            return 4;
+        }
+      } 
     }
 
     void InitDeck()
@@ -213,5 +212,6 @@ public:
         return pickedCard;
     }
 
+    
    
 };

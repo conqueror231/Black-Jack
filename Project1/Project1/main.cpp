@@ -148,7 +148,7 @@ void RenderThreadFunction() {
     while (true) {
 
       
-        auto startTime = std::chrono::high_resolution_clock::now();
+     //   auto startTime = std::chrono::high_resolution_clock::now();
         std::string text;
 
         if (isRunning == false)
@@ -218,9 +218,9 @@ void RenderThreadFunction() {
 
             SDL_FreeSurface(surface);
         }
-       // std::cout << "preHitStage" << std::endl;
+       
         if (hitOrStandStage) {
-            std::cout << "hitStage" << std::endl;
+           
             //SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             if (surface == nullptr)
@@ -279,9 +279,9 @@ void RenderThreadFunction() {
 
         }
 
-        auto endTime = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
-        std::cout << "Time: " << duration.count() << " ms" << std::endl;
+      //  auto endTime = std::chrono::high_resolution_clock::now();
+     //   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
+       // std::cout << "Time: " << duration.count() << " ms" << std::endl;
        
 
        
