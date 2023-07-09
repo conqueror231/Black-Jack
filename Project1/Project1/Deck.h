@@ -7,7 +7,7 @@
 #include<string>
 #include<SDL.h>
 #include<SDL_image.h>
-
+#include<mutex>
 
 class Deck
 {
@@ -23,8 +23,87 @@ private:
 
 
 public:
-    void InitDeck()
+    void AddCard(std::mutex& mutex)
     {
+        PlayingCard  cardToAdd;
+        SDL_Surface* surfF,* surfB;
+     
+        std::uniform_int_distribution<size_t> cardScore(2, 10);
+        std::uniform_int_distribution<size_t> cardSuit(0, 3);
+
+        size_t cardScoreNum, cardSuitNum;
+        cardScoreNum = cardScore(gen);
+        cardSuitNum = cardSuit(gen);
+
+        std::string f = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" + std::to_string(cardScoreNum) + "_of_" + suits[cardSuitNum] + ".png";
+        std::string b = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
+
+        surfF = IMG_Load(f.c_str());
+        surfB = IMG_Load(b.c_str());
+
+
+        /*
+        while (true) {
+
+        
+
+            std::uniform_int_distribution<size_t> cardScore(2, 11);
+            std::uniform_int_distribution<size_t> cardSuit(1, 4);
+
+             cardScoreNum = cardScore(gen);
+             cardSuitNum = cardSuit(gen);
+
+
+            std::string f = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/" + std::to_string(cardScoreNum) + "_of_" + GetSuitStringByNumber(cardSuitNum) + ".png";
+            std::string b = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
+
+            surfF = IMG_Load(f.c_str());
+            surfB = IMG_Load(b.c_str());
+
+            mutex.lock();
+            cardToAdd = PlayingCard(cardScoreNum, SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
+            mutex.unlock();
+
+            bool cardIsUsed = false;
+            for (auto card : cards) {
+                if (card.GetScore() == cardScoreNum && card.GetSuit() == cardToAdd.GetSuit()) {
+                    cardIsUsed = true;
+                    break;
+                }
+              
+            }
+
+            if (cardIsUsed == false) {
+                break;
+            }
+
+
+        }
+        */
+        mutex.lock();
+        
+        cards.emplace_back(cardScoreNum, SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
+        mutex.unlock();
+
+         
+    }
+
+    void InitDeck()
+    {/*
+        for (int i = 0; i < 10; i++) {
+            std::string f = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/2_of_diamonds.png";
+            std::string b = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
+
+            SDL_Surface* surfF = IMG_Load(f.c_str());
+            SDL_Surface* surfB = IMG_Load(b.c_str());
+
+            cards.emplace_back(2, SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
+
+            SDL_FreeSurface(surfB);
+            SDL_FreeSurface(surfF);
+            */
+       // }
+        /*
         std::string frontImagePath;
 
         std::string backImagePath = "E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/card back red.png";
@@ -65,7 +144,7 @@ public:
         }
         SDL_FreeSurface(surface2);
         surface2 = nullptr;
-
+        */
     }
 
     static Deck& GetInstance()
@@ -102,7 +181,8 @@ public:
     {
         PlayingCard pickedCard;
         if (cards.empty()) {
-            throw std::runtime_error("������ �����!");
+           throw std::runtime_error("������ �����!");
+
         }
 
         while (true) {
@@ -120,20 +200,5 @@ public:
         return pickedCard;
     }
 
-    Suit GetSuitByNumber(int randNum)
-    {
-        switch (randNum)
-        {
-        case 1:
-            return Suit::Spades;
-        case 2:
-            return Suit::Hearts;
-        case 3:
-            return Suit::Diamonds;
-        case 4:
-            return Suit::Clubs;
-        default:
-            throw std::invalid_argument("������������ ����� ��� �����.");
-        }
-    }
+   
 };

@@ -15,6 +15,7 @@ public:
 
 	void DealCards(Player& player, int numCards)
 	{
+
 		for (int i = 0; i < numCards; i++)
 		{
 			player.TakeCardToHand();

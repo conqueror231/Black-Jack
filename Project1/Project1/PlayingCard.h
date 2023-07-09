@@ -48,6 +48,10 @@ public:
 		suit = suit_;
 	}
 
+	Suit GetSuit() {
+		return suit;
+	}
+
 	void Display() const {
 		std::cout << "Card: " << cardScore;
 		/*
@@ -70,21 +74,8 @@ public:
 
 	};
 	int GetScore() const { return cardScore; };
-	/*
-	void GetTexture(Suit suit){
-		if (suit == Suit::Spades) {
-			// ������� �������� ���� �����
-		}
-		if (suit == Suit::Diamonds) {
-			// ������� �������� ���� �����
-		}
-		if (suit == Suit::Hearts) {
-			// ������� �������� ���� �����
-		}
-		if (suit == Suit::Clubs) {
-			// ������� �������� ���� �����
-		}
-	}
-	*/
+	
+	
+	
 
 };

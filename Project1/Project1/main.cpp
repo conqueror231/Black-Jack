@@ -13,6 +13,8 @@
 #include<Windows.h>
 #include<fstream>
 #include <cstdlib>
+#include <mutex>
+
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
@@ -39,9 +41,14 @@ std::vector<PlayingCard>* playerCardsPtr;
 short int PlayerCardIndex = 0;
 short int DealerCardIndex = 0;
 
+std::mutex rendererMutex;
 class dispenser {
 public:
     void TakeCard(Player& player, int countOfCards_) {
+
+      for(int i = 0; i < countOfCards_; i++)
+      Deck::GetInstance().AddCard(rendererMutex);
+
         dealer.DealCards(player, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
@@ -55,6 +62,9 @@ public:
     }
 
     void TakeCard(Dealer& dealer, int countOfCards_) {
+        for (int i = 0; i < countOfCards_; i++)
+            Deck::GetInstance().AddCard(rendererMutex);
+        //Deck::GetInstance().AddCard();
         dealer.DealCards(dealer, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
@@ -67,6 +77,8 @@ public:
 
     void DealerLogic(Dealer& dealer) {
         while (dealer.ShowScore().first < 17) {
+        
+            Deck::GetInstance().AddCard(rendererMutex);
             dealer.DealCards(dealer, 1);
 
             std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
@@ -87,9 +99,11 @@ void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fo
     TTF_Font* font = TTF_OpenFont(fontPath.c_str(), 30);
     SDL_Color textColor = color;
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
+    rendererMutex.lock();
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
-    SDL_RenderCopy(renderer, textTexture, nullptr, &place);
 
+    SDL_RenderCopy(renderer, textTexture, nullptr, &place);
+    rendererMutex.unlock();
     SDL_DestroyTexture(textTexture);
     SDL_FreeSurface(textSurface);
     TTF_CloseFont(font);
@@ -125,15 +139,23 @@ SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
 #pragma endregion
 
 int moneyToBet = 100;
-void RenderThreadFunction(SDL_Renderer* renderer) {
+int HowManyTimesNeedToAddCard = 0;
+
+
+bool need = false;
+
+void RenderThreadFunction() {
     while (true) {
         std::string text;
 
         if (isRunning == false)
             break;
+
+
+        rendererMutex.lock();
         SDL_RenderClear(renderer);
-
-
+        rendererMutex.unlock();
+       
         MoveCard();
         //player score
 
@@ -183,9 +205,13 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
             if (surface == nullptr)
                 std::cout << "Surface didnt load" << std::endl;
 
+            rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &buttonRect);
+            rendererMutex.unlock();
+
             SDL_DestroyTexture(buttonTexture);
+
 
             SDL_FreeSurface(surface);
         }
@@ -195,11 +221,13 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
             if (surface == nullptr)
                 std::cout << "qweqwe";
 
+            rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
+         
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &hitButtonRect);
 
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &stayButtonRect);
-
+            rendererMutex.unlock();
             SDL_DestroyTexture(buttonTexture);
             SDL_FreeSurface(surface);
 
@@ -210,8 +238,9 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
         int time = 0;
         for (auto& it : Textures) {
+            rendererMutex.lock();
             if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
-
+                
                 if (lastDealersCardMustBeShown)
                     SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
                 else
@@ -220,6 +249,7 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
             else
                 SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
 
+            rendererMutex.unlock();
 
             if (time == indexTexture)
                 break;
@@ -229,7 +259,11 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
 
         // Оновлення відображення
+        rendererMutex.lock();
         SDL_RenderPresent(renderer);
+        rendererMutex.unlock();
+        std::cout << indexTexture <<std::endl;
+
         if (isMoving == false) {
             if (indexTexture < Rects.size() - 1) {
 
@@ -244,6 +278,7 @@ void RenderThreadFunction(SDL_Renderer* renderer) {
 
     }
 }
+
 bool PointInRect(int x, int y, const SDL_Rect& rect) {
     return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
 }
@@ -272,7 +307,7 @@ int main(int argc, char* argv[])
     Deck& deck = Deck::GetInstance();
     deck.SetRenderer(renderer);
     deck.InitDeck();
-
+  
 
     playerCardsPtr = player.GetCardInstance();
     dealerCardsPtr = dealer.GetCardInstance();
@@ -281,20 +316,24 @@ int main(int argc, char* argv[])
 
     dispenser disp;
 
+  
     SDL_Rect StartRect{ 500, 200, 150, 200 };
-
-    std::thread renderThread(RenderThreadFunction, renderer);
-
+  
+    std::thread renderThread(RenderThreadFunction);
+  
+    
+    
     std::this_thread::sleep_for(std::chrono::milliseconds(0)); // ~60 FPS
 
 
     SDL_SetRenderDrawColor(renderer, 0, 183, 0, 255);
-    SDL_RenderClear(renderer);
+   // SDL_RenderClear(renderer);
 
 
     bool takeCard = false;
     bool waitToEndCardsMoving = false;
 
+  
     while (isRunning) {
 
         while (SDL_PollEvent(&event)) {
@@ -375,6 +414,13 @@ int main(int argc, char* argv[])
         }
 
         if (startCardsStage) {
+            
+            
+
+
+               
+
+
             disp.TakeCard(dealer, 2);
             disp.TakeCard(player, 2);
             startCardsStage = false;
