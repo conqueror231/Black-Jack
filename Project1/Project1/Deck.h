@@ -51,6 +51,7 @@ public:
 
             bool cardUsed = false;
             for (auto card : cards) {
+                int num = FromSuitToNumber(card.GetSuit());
                 if (card.GetScore() == cardScoreNum && FromSuitToNumber(card.GetSuit()) == cardSuitNum)
                 {
                     cardUsed = true;
@@ -67,7 +68,7 @@ public:
         if (cardScoreNum > 11 && cardScoreNum != 11)
             cardScoreNum = 10;
         
-            cards.emplace_back(cardScoreNum, SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
+            cards.emplace_back(cardScoreNum, FromNumberToSuit(cardSuitNum), SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
 
         
        /* auto endTime = std::chrono::high_resolution_clock::now();
@@ -82,7 +83,6 @@ public:
     }
 
     int FromSuitToNumber(Suit suit_) {
-
         switch(suit_)
         {
         case Suit::Clubs:{
@@ -99,6 +99,26 @@ public:
         }
       } 
     }
+    Suit FromNumberToSuit(int num){
+    
+        switch (num)
+        {
+        case 1: {
+            return Suit::Clubs;
+        }
+        case 2: {
+            return  Suit::Diamonds;
+        }
+        case 3: {
+            return Suit::Hearts;
+        }
+        case 4: {
+            return Suit::Spades;
+        }
+        }
+    
+    }
+
 
     void InitDeck()
     {/*

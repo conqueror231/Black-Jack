@@ -124,10 +124,10 @@ bool startCardsStage = false;
 bool hitOrStandStage = false;
 bool dealerLogicStage = false;
 bool winDefindingStage = false;
-
 bool lastDealersCardMustBeShown = false;
 #pragma endregion
-
+bool GoToNextDeal = false;
+bool waitToEndCardsMoving = false;
 #pragma region Rects for interface
 
 SDL_Rect buttonRect = { 10, 500, 60, 60 };
@@ -136,13 +136,13 @@ SDL_Rect stayButtonRect = { 800, 500, 60, 60 };
 
 SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
 SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
+
+SDL_Rect GoToNextDealRect = { 450, 300, 100, 60 };
 #pragma endregion
 
 int moneyToBet = 100;
-int HowManyTimesNeedToAddCard = 0;
 
 
-bool need = false;
 
 void RenderThreadFunction() {
     while (true) {
@@ -223,8 +223,7 @@ void RenderThreadFunction() {
            
             //SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
             SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
-            if (surface == nullptr)
-                std::cout << "qweqwe";
+         
 
            // rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -240,6 +239,18 @@ void RenderThreadFunction() {
 
         }
 
+        if (waitToEndCardsMoving) {
+            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+
+            // rendererMutex.lock();
+            SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
+
+            SDL_RenderCopy(renderer, buttonTexture, nullptr, &GoToNextDealRect);
+
+            //  rendererMutex.unlock();
+            SDL_DestroyTexture(buttonTexture);
+            SDL_FreeSurface(surface);
+        }
 
         int time = 0;
         for (auto& it : Textures) {
@@ -340,11 +351,11 @@ int main(int argc, char* argv[])
     rendererMutex.lock();
     SDL_SetRenderDrawColor(renderer, 0, 183, 0, 255);
     rendererMutex.unlock();
-   // SDL_RenderClear(renderer);
+
 
 
     bool takeCard = false;
-    bool waitToEndCardsMoving = false;
+
 
   
     while (isRunning) {
@@ -411,6 +422,22 @@ int main(int argc, char* argv[])
 
             }
 
+            if (waitToEndCardsMoving == true) {
+
+                if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+                    int mouseX = event.button.x;
+                    int mouseY = event.button.y;
+                    if (PointInRect(mouseX, mouseY, GoToNextDealRect)) {
+
+                        std::cout << "Hit card" << std::endl;
+
+                        GoToNextDeal = true;
+
+                    }
+                }
+
+
+            }
 
 
         }
@@ -520,9 +547,10 @@ int main(int argc, char* argv[])
         }
 
         if (waitToEndCardsMoving) {
+
             if (indexTexture + 1 == (PlayerCardIndex + DealerCardIndex)) {
 
-                if (isMoving == false) {
+                if (isMoving == false && GoToNextDeal == true) {
                     winDefindingStage = false;
                     betStage = true;
                     Rects.clear();
@@ -535,10 +563,11 @@ int main(int argc, char* argv[])
                     player.Reload();
                     dealer.Reload();
                     Bank::GetInstance().ReloadBank();
+
                     waitToEndCardsMoving = false;
                     lastDealersCardMustBeShown = false;
                     isMoving = true;
-
+                    GoToNextDeal = false;
                 }
             }
         }

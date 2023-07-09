@@ -30,8 +30,8 @@ public:
 	{}
 
 
-	PlayingCard(short int cardScore_, SDL_Texture* textureFront_, SDL_Texture* textureBack_)
-		: cardScore(cardScore_), textureFront(textureFront_), textureBack(textureBack_)
+	PlayingCard(short int cardScore_,Suit suit_, SDL_Texture* textureFront_, SDL_Texture* textureBack_)
+		: cardScore(cardScore_),suit(suit_), textureFront(textureFront_), textureBack(textureBack_)
 	{}
 
 
