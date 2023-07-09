@@ -1,8 +1,9 @@
 #pragma once
 enum class Suit
 {
-	Spades,
-	Hearts,
+	Clubs,
 	Diamonds,
-	Clubs
+	Hearts,
+	Spades,
+	
 };

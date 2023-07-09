@@ -19,7 +19,6 @@ private:
     std::mt19937 gen;
 
     std::string suits[4]{ {"clubs"}, {"diamonds"}, {"hearts"}, {"spades" } };
-    std::string fronts[3]{ {"king"}, {"jack"}, {"queen"} };
 
 
 public:
@@ -37,7 +36,7 @@ public:
      
         std::uniform_int_distribution<size_t> cardScore(2, 14);
         std::uniform_int_distribution<size_t> cardSuit(0, 3);
-        size_t cardScoreNum, cardSuitNum;
+        int cardScoreNum, cardSuitNum;
         while (true) {
             
             cardScoreNum = cardScore(gen);
