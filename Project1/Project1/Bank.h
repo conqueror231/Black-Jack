@@ -15,13 +15,11 @@ public:
 			return instance;
 		}
 
-	int GetTotalMoney() {
-			return totalMoney;
-		};
-	void SendMoney(int money, Player& player) {
-			totalMoney += money;
-			player.BetMoney(money);
-		}
+	int GetTotalMoney();
+
+	void SendMoney(int money, Player& player);
+
+	
 	void GiveMoney(int money, Player& player);
 	
 	void ReloadBank() {

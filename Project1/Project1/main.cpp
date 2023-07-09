@@ -19,7 +19,6 @@
 
 Mix_Music* gMusic = NULL;
 
-//Mix_Chunk* dealCardEffect = Mix_LoadWAV("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/cardPlacedSound.mp3");
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
@@ -50,7 +49,7 @@ std::mutex rendererMutex;
 class dispenser {
 public:
     void TakeCard(Player& player, int countOfCards_) {
-        Mix_Chunk* dealCardEffect = Mix_LoadWAV("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/cardPlacedSound.mp3");
+        Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/cardPlacedSound.mp3");
         Mix_PlayChannel(-1, dealCardEffect, 0);
         Mix_Volume(-1, MIX_MAX_VOLUME / 8);
 
@@ -177,8 +176,8 @@ void RenderThreadFunction() {
 
         SDL_Rect HandScore{ destinationRectForPlayer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForPlayer.y, 100, 100 };
 
-        ShowText(text, HandScore, { 0,0,0 }, "E:/lazy.ttf");
-
+     
+        ShowText(text, HandScore, { 0,0,0 }, "Assets/lazy.ttf");
 
         //dealer score
 
@@ -187,7 +186,8 @@ void RenderThreadFunction() {
         text = std::to_string(dealer.ShowScore().first);
 
         SDL_Rect HandScoreDealer{ destinationRectForDealer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForDealer.y, 100, 100 };
-        ShowText(text, HandScoreDealer, { 0,0,0 }, "E:/lazy.ttf");
+       
+        ShowText(text, HandScoreDealer, { 0,0,0 }, "Assets/lazy.ttf");
 
 
 
@@ -196,17 +196,20 @@ void RenderThreadFunction() {
         text = "Bank:";
         text.append(std::to_string(Bank::GetInstance().GetTotalMoney()).c_str());
 
-        ShowText(text, totalBankMoneyRect, { 0,0,0 }, "E:/lazy.ttf");
+      
+        ShowText(text, totalBankMoneyRect, { 0,0,0 }, "Assets/lazy.ttf");
 
         //Player Money
         text = "Money: ";
         text.append(std::to_string(player.GetMoney()));
 
         SDL_Rect PlayerMoney{ destinationRectForPlayer.x - 150, destinationRectForPlayer.y, 150, 60 };
-        ShowText(text, PlayerMoney, { 0,0,0 }, "E:/lazy.ttf");
+        
+        ShowText(text, PlayerMoney, { 0,0,0 }, "Assets/lazy.ttf");
 
         {
-            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+        
+            SDL_Surface* surface = IMG_Load("Assets/button.jpg");
              rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
 
@@ -218,15 +221,18 @@ void RenderThreadFunction() {
         }
 
         if (betStage) {
-            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
-            // SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+           
+            SDL_Surface* surface = IMG_Load("Assets/button.jpg");
 
 
 
-            ShowText(std::to_string(moneyToBet), moneyToBetRect, { 0,0,0 }, "E:/lazy.ttf");
-
-            if (surface == nullptr)
-                std::cout << "Surface didnt load" << std::endl;
+          
+            std::string path = "Assets/lazy.ttf";
+            ShowText(std::to_string(moneyToBet), moneyToBetRect, { 0,0,0 }, "Assets/lazy.ttf");
+            if (surface == nullptr){
+                std::cout << path << std::endl;
+            }
+                
 
            rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -241,9 +247,9 @@ void RenderThreadFunction() {
        
         if (hitOrStandStage) {
            
-            //SDL_Surface* surface = IMG_Load("E:/Black-Jack/.git/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
-            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+           
          
+            SDL_Surface* surface = IMG_Load("Assets/button.jpg");
 
            // rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -260,7 +266,7 @@ void RenderThreadFunction() {
         }
 
         if (waitToEndCardsMoving) {
-            SDL_Surface* surface = IMG_Load("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/button.jpg");
+            SDL_Surface* surface = IMG_Load("Assets/button.jpg");
 
             // rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -385,9 +391,10 @@ int main(int argc, char* argv[])
 
     bool takeCard = false;
 
-   // gMusic = Mix_LoadMUS("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/music.mp3");
+    gMusic = Mix_LoadMUS("Assets/music.mp3");
 
     Mix_PlayMusic(gMusic, -1);
+    Mix_VolumeMusic(20);
     while (isRunning) {
 
         while (SDL_PollEvent(&event)) {
@@ -400,8 +407,9 @@ int main(int argc, char* argv[])
                 int mouseX = event.button.x;
                 int mouseY = event.button.y;
                 if (PointInRect(mouseX, mouseY, SwitchCardsTexturesRect)) {
-
-                    std::cout << "sssaa";
+                    Mix_Chunk* dealCardEffect = Mix_LoadWAV("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/buttonPressed.mp3");
+                    Mix_PlayChannel(-1, dealCardEffect, 0);
+                    Mix_Volume(-1, MIX_MAX_VOLUME / 4);
                     Deck::GetInstance().SwitchToAnotherTextureCards(rendererMutex);
                 }
             }
@@ -423,11 +431,21 @@ int main(int argc, char* argv[])
                     }
                 }
                 if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_UP) {
+               
+                    Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/chips.mp3");
+                    Mix_PlayChannel(-1, dealCardEffect, 0);
+                    Mix_Volume(-1, MIX_MAX_VOLUME / 4);
+
                     if (player.GetMoney() != moneyToBet)
                         moneyToBet += 100;
                     std::cout << "Money to bet:" << moneyToBet << std::endl;
                 }
                 if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_DOWN) {
+                
+                    Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/chips.mp3");
+                    Mix_PlayChannel(-1, dealCardEffect, 0);
+                    Mix_Volume(-1, MIX_MAX_VOLUME / 4);
+
                     if (moneyToBet > 100)
                         moneyToBet -= 100;
                     std::cout << "Money to bet:" << moneyToBet << std::endl;
@@ -441,6 +459,10 @@ int main(int argc, char* argv[])
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, hitButtonRect)) {
+                      
+                        Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/buttonPressed.mp3");
+                        Mix_PlayChannel(-1, dealCardEffect, 0);
+                        Mix_Volume(-1, MIX_MAX_VOLUME / 4);
 
                         std::cout << "Hit card" << std::endl;
 
@@ -452,6 +474,10 @@ int main(int argc, char* argv[])
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, stayButtonRect)) {
+                      
+                        Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/buttonPressed.mp3");
+                        Mix_PlayChannel(-1, dealCardEffect, 0);
+                        Mix_Volume(-1, MIX_MAX_VOLUME / 4);
 
                         player.SetBusted();
                         hitOrStandStage = false;
@@ -469,8 +495,11 @@ int main(int argc, char* argv[])
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, GoToNextDealRect)) {
-
-                        std::cout << "Hit card" << std::endl;
+                       
+                        Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/buttonPressed.mp3");
+                        Mix_PlayChannel(-1, dealCardEffect, 0);
+                        Mix_Volume(-1, MIX_MAX_VOLUME / 4);
+                        
 
                         GoToNextDeal = true;
 
@@ -549,6 +578,7 @@ int main(int argc, char* argv[])
 
         if (winDefindingStage)
         {
+          
 
             int playerScore = player.ShowScore().first;
             int dealerScore = dealer.ShowScore().first;
@@ -572,6 +602,14 @@ int main(int argc, char* argv[])
 
             if (playerScore > dealerScore && playerScore < 22)
             {
+             
+                Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/winChisp.mp3");
+                Mix_PlayChannel(-1, dealCardEffect, 0);
+                Mix_Volume(-1, MIX_MAX_VOLUME/8);
+
+
+                
+
                 Bank::GetInstance().GiveMoney(moneyToBet, player);
                 std::cout << "player won (playerScore > dealerScore) ";
                 std::cout << "Player money:" << player.GetMoney() << std::endl;
@@ -580,7 +618,21 @@ int main(int argc, char* argv[])
             {
                 std::cout << "dealer lost (dealer > 21)" << std::endl;
                 Bank::GetInstance().GiveMoney(moneyToBet, player);
+
+             
+                Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/winChisp.mp3");
+                Mix_PlayChannel(-1, dealCardEffect, 0);
+                Mix_Volume(-1, MIX_MAX_VOLUME/8);
+
             }
+            if (playerScore > 21) {
+                Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/winChisp.mp3");
+                Mix_PlayChannel(-1, dealCardEffect, 0);
+                Mix_Volume(-1, MIX_MAX_VOLUME / 8);
+
+            }
+
+
 
             winDefindingStage = false;
             waitToEndCardsMoving = true;
@@ -655,6 +707,13 @@ void MoveCard() {
         }
 
         if (std::abs(Rects[indexTexture].first.x - Rects[indexTexture].second.x) < 0.1 && std::abs(Rects[indexTexture].first.y - Rects[indexTexture].second.y) < 0.1) {
+            if (Rects.size() - 1 != indexTexture) {
+               
+                Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/cardPlacedSound.mp3");
+                Mix_PlayChannel(-1, dealCardEffect, 0);
+                Mix_Volume(-1, MIX_MAX_VOLUME / 8);
+            }
+
             isMoving = false;
             x = 1, y = 1;
 

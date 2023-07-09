@@ -8,6 +8,7 @@ protected:
 	bool isBusted = false;
 
 public:
+
 	std::vector<PlayingCard>* GetCardInstance()
 	{
 		return hand->GetCardInstance();

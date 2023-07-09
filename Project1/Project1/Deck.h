@@ -22,7 +22,8 @@ private:
 
     std::string suits[4]{ {"clubs"}, {"diamonds"}, {"hearts"}, {"spades" } };
 
-    std::string PathsToCards[2] = { {"E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/"}, {"E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/"} };
+   // std::string PathsToCards[2] = { {"E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/"}, {"E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/"} };
+    std::string PathsToCards[2] = { {"Assets/"}, {"Assets/"} };
     int index = 0;
 public:
     void SwitchToAnotherTextureCards(std::mutex& mutex) {

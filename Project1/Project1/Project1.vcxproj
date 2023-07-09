@@ -86,9 +86,9 @@
     <ExternalIncludePath>E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;E:\black jack\SDL2_ttf-devel-2.20.2-VC\SDL2_ttf-2.20.2\lib\x64;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\lib\x64;$(LibraryPath)</LibraryPath>
-    <ExternalIncludePath>E:\black jack\SDL2_ttf-devel-2.20.2-VC\SDL2_ttf-2.20.2\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <IncludePath>E:\02 c++\01 myProjects\Black-Jack\Project1\x64\Release\include;E:\02 c++\01 myProjects\Black-Jack\Project1\Project1\x64\Release\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\02 c++\01 myProjects\Black-Jack\Project1\x64\Release\lib\x64;E:\02 c++\01 myProjects\Black-Jack\Project1\Project1\x64\Release\lib\x64;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;E:\black jack\SDL2_ttf-devel-2.20.2-VC\SDL2_ttf-2.20.2\lib\x64;E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\lib\x64;$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>E:\02 c++\01 myProjects\Black-Jack\Project1\x64\Release\include;E:\02 c++\01 myProjects\Black-Jack\Project1\Project1\Release\include;E:\black jack\SDL2_ttf-devel-2.20.2-VC\SDL2_ttf-2.20.2\include;E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\include;E:\02 c++\01 myProjects\Black-Jack\Project1\Project1\x64\Release\include;E:\02 c++\SDL2-devel-2.28.0-VC\SDL2-2.28.0\include;$(ExternalIncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -155,12 +155,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>E:\black jack\SDL2-devel-2.28.1-VC\SDL2-2.28.1\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2test.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2test.lib;SDL2_ttf.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bank.cpp" />
-    <ClCompile Include="BasePlayer.cpp" />
     <ClCompile Include="Dealer.cpp" />
     <ClCompile Include="Deck.cpp" />
     <ClCompile Include="Hand.cpp" />
