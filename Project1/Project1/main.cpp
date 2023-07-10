@@ -59,7 +59,7 @@ public:
         dealer.DealCards(player, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, 150, 200 });
 
             Rects.push_back(temp);
             Textures.push_back(playerCardsPtr->at(PlayerCardIndex).GetTexture());
@@ -75,7 +75,7 @@ public:
         dealer.DealCards(dealer, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
@@ -88,7 +88,7 @@ public:
             Deck::GetInstance().AddCard(rendererMutex);
             dealer.DealCards(dealer, 1);
 
-            std::pair<SDL_Rect, SDL_Rect> temp({ 500, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
@@ -145,7 +145,7 @@ SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
 SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
 
 SDL_Rect GoToNextDealRect = { 450, 300, 100, 60 };
-SDL_Rect SwitchCardsTexturesRect = { 10, 10, 100, 60 };
+SDL_Rect SwitchCardsTexturesRect = { 10, 10, 60, 60 };
 #pragma endregion
 
 int moneyToBet = 100;
@@ -156,7 +156,7 @@ void RenderThreadFunction() {
     while (true) {
 
       
-     //   auto startTime = std::chrono::high_resolution_clock::now();
+        auto startTime = std::chrono::high_resolution_clock::now();
         std::string text;
 
         if (isRunning == false)
@@ -180,15 +180,15 @@ void RenderThreadFunction() {
         ShowText(text, HandScore, { 0,0,0 }, "Assets/lazy.ttf");
 
         //dealer score
+        if (lastDealersCardMustBeShown) {
+            if (dealer.ShowScore().second == 21)
+                text = std::to_string(dealer.ShowScore().second);
+            text = std::to_string(dealer.ShowScore().first);
 
-        if (dealer.ShowScore().second == 21)
-            text = std::to_string(dealer.ShowScore().second);
-        text = std::to_string(dealer.ShowScore().first);
+            SDL_Rect HandScoreDealer{ destinationRectForDealer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForDealer.y, 100, 100 };
 
-        SDL_Rect HandScoreDealer{ destinationRectForDealer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForDealer.y, 100, 100 };
-       
-        ShowText(text, HandScoreDealer, { 0,0,0 }, "Assets/lazy.ttf");
-
+            ShowText(text, HandScoreDealer, { 0,0,0 }, "Assets/lazy.ttf");
+        }
 
 
         //total bank money
@@ -316,10 +316,11 @@ void RenderThreadFunction() {
 
         }
 
-      //  auto endTime = std::chrono::high_resolution_clock::now();
-     //   auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
-       // std::cout << "Time: " << duration.count() << " ms" << std::endl;
-       
+        auto endTime = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
+        int frameDelay = 5 * 1000 - duration.count(); 
+        if (frameDelay > 0)
+           SDL_Delay(frameDelay / 1000); 
 
        
 
@@ -394,7 +395,7 @@ int main(int argc, char* argv[])
     gMusic = Mix_LoadMUS("Assets/music.mp3");
 
     Mix_PlayMusic(gMusic, -1);
-    Mix_VolumeMusic(20);
+     Mix_VolumeMusic(20);
     while (isRunning) {
 
         while (SDL_PollEvent(&event)) {
@@ -407,10 +408,10 @@ int main(int argc, char* argv[])
                 int mouseX = event.button.x;
                 int mouseY = event.button.y;
                 if (PointInRect(mouseX, mouseY, SwitchCardsTexturesRect)) {
-                    Mix_Chunk* dealCardEffect = Mix_LoadWAV("E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/buttonPressed.mp3");
+                    Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/buttonPressed.mp3");
                     Mix_PlayChannel(-1, dealCardEffect, 0);
                     Mix_Volume(-1, MIX_MAX_VOLUME / 4);
-                    Deck::GetInstance().SwitchToAnotherTextureCards(rendererMutex);
+                   // Deck::GetInstance().SwitchToAnotherTextureCards(rendererMutex);
                 }
             }
           
