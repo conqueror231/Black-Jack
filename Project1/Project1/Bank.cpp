@@ -12,9 +12,10 @@ int Bank::GetTotalMoney()
 
 void Bank::SendMoney(int money, Player& player)
 {
-    if (totalMoney >= money)
+    if (totalMoney <= money)
     {
         totalMoney -= money;
+        player.BetMoney(money);
     }
     else
     {
@@ -27,6 +28,7 @@ void Bank::GiveMoney(int money, Player& player)
     if (player.GetMoney() >= money)
     {
         totalMoney += money;
+        player.TakeMoney(money);
     }
     else
     {
