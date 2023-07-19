@@ -22,10 +22,21 @@ private:
 
     std::string suits[4]{ {"clubs"}, {"diamonds"}, {"hearts"}, {"spades" } };
 
-   // std::string PathsToCards[2] = { {"E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/"}, {"E:/02 c++/01 myProjects/Black-Jack/Project1/Project1/PNG-cards-1.3/"} };
     std::string PathsToCards[2] = { {"Assets/"}, {"Assets/"} };
     int index = 0;
 public:
+    void SwitchToAnotherTextureCards(std::mutex& mutex);
+    void AddCard(std::mutex& mutex);
+    void ReloadDeck();
+    int FromSuitToNumber(Suit suit_);
+    Suit FromNumberToSuit(int num);
+    void SetRenderer(SDL_Renderer* renderer_);
+    Deck();
+    void ShowDeck() const;
+    void ShuffleDeck();
+    PlayingCard pickCard();
+
+
     void SwitchToAnotherTextureCards(std::mutex& mutex) {
     
         index++;
@@ -119,7 +130,7 @@ public:
          
     }
 
-   void ReloadDeck() {
+    void ReloadDeck() {
       
        cards.clear();
     }

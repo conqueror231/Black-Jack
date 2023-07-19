@@ -1,31 +1,22 @@
 #pragma once
 #include "Player.h"
-#include<iostream>
+#include <iostream>
 
 class Bank
 {
 private:
-	int totalMoney = 0;
+    int totalMoney = 0;
+
 public:
-	void ShowTotalMoney() const;
-	static Bank& GetInstance()
-		{
+    void ShowTotalMoney() const;
+    static Bank& GetInstance()
+    {
+        static Bank instance;
+        return instance;
+    }
 
-			static Bank instance;
-			return instance;
-		}
-
-	int GetTotalMoney();
-
-	void SendMoney(int money, Player& player);
-
-	
-	void GiveMoney(int money, Player& player);
-	
-	void ReloadBank() {
-		totalMoney = 0;
-	}
-
-	};
-
-	
+    int GetTotalMoney();
+    void SendMoney(int money, Player& player);
+    void GiveMoney(int money, Player& player);
+    void ReloadBank();
+};

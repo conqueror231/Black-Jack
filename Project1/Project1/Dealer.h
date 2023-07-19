@@ -7,36 +7,9 @@
 class Dealer : public BasePlayer
 {
 public:
-	void Reload()
-	{
-		hand->Reload();
-		isBusted = false;
-	}
-
-	void DealCards(Player& player, int numCards)
-	{
-
-		for (int i = 0; i < numCards; i++)
-		{
-			player.TakeCardToHand();
-		}
-	}
-
-	void DealCards(Dealer& dealer, int numCards)
-	{
-		for (int i = 0; i < numCards; i++)
-		{
-			hand->TakeCard();
-		}
-	}
-
-	void CollectCards(Player& player)
-	{
-		player.ClearHand();
-	}
-
-	void SetBusted()
-	{
-		isBusted = true;
-	}
+	void Reload();
+	void DealCards(Player& player, int numCards);
+	void DealCards(Dealer& dealer, int numCards);
+	void CollectCards(Player& player);
+	void SetBusted();
 };

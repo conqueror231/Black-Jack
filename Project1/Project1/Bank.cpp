@@ -1,20 +1,40 @@
 #include "Bank.h"
 
-int Bank::GetTotalMoney() {
-	return totalMoney;
-};
-
-void Bank::SendMoney(int money, Player& player) {
-	totalMoney += money;
-	player.BetMoney(money);
+void Bank::ShowTotalMoney() const
+{
+    std::cout << "Total money in the bank: " << totalMoney << std::endl;
 }
 
-void Bank::ShowTotalMoney() const {
-	std::cout << "Bank: " << totalMoney;
+int Bank::GetTotalMoney()
+{
+    return totalMoney;
 }
 
-void Bank::GiveMoney(int money, Player& player) {
-	totalMoney -= money;
-	player.TakeMoney(money * 2);
+void Bank::SendMoney(int money, Player& player)
+{
+    if (totalMoney >= money)
+    {
+        totalMoney -= money;
+    }
+    else
+    {
+        std::cout << "Not enough money in the bank to send!" << std::endl;
+    }
 }
 
+void Bank::GiveMoney(int money, Player& player)
+{
+    if (player.GetMoney() >= money)
+    {
+        totalMoney += money;
+    }
+    else
+    {
+        std::cout << "Player doesn't have enough money to give!" << std::endl;
+    }
+}
+
+void Bank::ReloadBank()
+{
+    totalMoney = 0;
+}
