@@ -34,10 +34,6 @@ void  Deck::AddCard(std::mutex& mutex)
 
     mutex.lock();
 
-    /*    std::cout << "AddCard===================================================================================================================" <<std::endl;
-        auto startTime = std::chrono::high_resolution_clock::now();*/
-
-
     PlayingCard  cardToAdd;
     SDL_Surface* surfF, * surfB;
 
@@ -81,12 +77,6 @@ void  Deck::AddCard(std::mutex& mutex)
         cardScoreNum = 10;
 
     cards.emplace_back(cardScoreNum, FromNumberToSuit(cardSuitNum), SDL_CreateTextureFromSurface(renderer, surfF), SDL_CreateTextureFromSurface(renderer, surfB));
-
-
-    /* auto endTime = std::chrono::high_resolution_clock::now();
-     auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
-     std::cout << "Time DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDeck: " << duration.count() << " ms" << std::endl;*/
-
 
 
     mutex.unlock();

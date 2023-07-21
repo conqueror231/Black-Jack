@@ -22,15 +22,15 @@ Mix_Music* gMusic = NULL;
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
-const int WINDOW_WIDTH = 900;
-const int WINDOW_HEIGHT = 600;
-const int CARD_WIDTH = 100;
-const int CARD_HEIGHT = 150;
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 800;
+const int CARD_WIDTH = 500;
+const int CARD_HEIGHT = 500;
 
 SDL_Renderer* renderer = nullptr;
 
-SDL_Rect destinationRectForPlayer{ 300, 400, 150, 200 };
-SDL_Rect destinationRectForDealer{ 300, 50, 150, 200 };
+SDL_Rect destinationRectForPlayer{ WINDOW_WIDTH / 4, WINDOW_HEIGHT * 1.7, CARD_WIDTH, CARD_HEIGHT };
+SDL_Rect destinationRectForDealer{ WINDOW_WIDTH/4, -150, CARD_WIDTH, CARD_HEIGHT };
 
 std::vector<std::pair<SDL_Rect, SDL_Rect>> Rects;
 std::vector<std::pair<SDL_Texture*, SDL_Texture*>> Textures;
@@ -59,7 +59,7 @@ public:
         dealer.DealCards(player, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, CARD_WIDTH, CARD_HEIGHT }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, CARD_WIDTH, CARD_HEIGHT });
 
             Rects.push_back(temp);
             Textures.push_back(playerCardsPtr->at(PlayerCardIndex).GetTexture());
@@ -75,7 +75,7 @@ public:
         dealer.DealCards(dealer, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, CARD_WIDTH, CARD_HEIGHT }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, CARD_WIDTH, CARD_HEIGHT });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
@@ -88,7 +88,7 @@ public:
             Deck::GetInstance().AddCard(rendererMutex);
             dealer.DealCards(dealer, 1);
 
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, CARD_WIDTH, CARD_HEIGHT }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y,CARD_WIDTH, CARD_HEIGHT });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
@@ -100,7 +100,6 @@ public:
         }
     }
 };
-
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath) {
     TTF_Font* font = TTF_OpenFont(fontPath.c_str(), 30);
@@ -115,7 +114,6 @@ void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fo
     SDL_FreeSurface(textSurface);
     TTF_CloseFont(font);
 }
-
 
 double x = 1, y = 1;
 
@@ -357,7 +355,7 @@ int main(int argc, char* argv[])
 
 
 
-    SDL_Window* window = SDL_CreateWindow("Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("Black Nigger", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 
@@ -382,12 +380,13 @@ int main(int argc, char* argv[])
     std::thread renderThread(RenderThreadFunction);
   
     
-
-
+    SDL_Surface* back = IMG_Load("/Assets/back.png");
+   
     rendererMutex.lock();
-    SDL_SetRenderDrawColor(renderer, 0, 183, 0, 255);
+    SDL_Texture* backText = SDL_CreateTextureFromSurface(renderer, back);
+    SDL_RenderCopy(renderer, backText, nullptr, nullptr);
     rendererMutex.unlock();
-
+  
 
 
     bool takeCard = false;
@@ -402,6 +401,7 @@ int main(int argc, char* argv[])
             if (event.type == SDL_QUIT) {
                 isRunning = false;
                 renderThread.join();
+                
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
