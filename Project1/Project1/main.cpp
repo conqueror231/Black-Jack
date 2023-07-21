@@ -23,14 +23,28 @@ Mix_Music* gMusic = NULL;
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
 const int WINDOW_WIDTH = 1200;
-const int WINDOW_HEIGHT = 800;
+const int WINDOW_HEIGHT = 900;
 const int CARD_WIDTH = 500;
 const int CARD_HEIGHT = 500;
 
 SDL_Renderer* renderer = nullptr;
 
-SDL_Rect destinationRectForPlayer{ WINDOW_WIDTH / 4, WINDOW_HEIGHT * 1.7, CARD_WIDTH, CARD_HEIGHT };
+SDL_Rect destinationRectForPlayer{ WINDOW_WIDTH / 4, WINDOW_HEIGHT / 1.76, CARD_WIDTH, CARD_HEIGHT };
 SDL_Rect destinationRectForDealer{ WINDOW_WIDTH/4, -150, CARD_WIDTH, CARD_HEIGHT };
+
+#pragma region Rects for interface_
+
+SDL_Rect buttonRect = { 10, WINDOW_HEIGHT - 70, 60, 60 };
+SDL_Rect hitButtonRect = { WINDOW_WIDTH - 70,  WINDOW_HEIGHT - 170, 60, 60 };
+SDL_Rect stayButtonRect = { WINDOW_WIDTH - 70,  WINDOW_HEIGHT - 70, 60, 60 };
+
+SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
+SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
+
+SDL_Rect GoToNextDealRect = { 450, 300, 100, 60 };
+SDL_Rect SwitchCardsTexturesRect = { 10, 10, 60, 60 };
+#pragma endregion
+
 
 std::vector<std::pair<SDL_Rect, SDL_Rect>> Rects;
 std::vector<std::pair<SDL_Texture*, SDL_Texture*>> Textures;
@@ -133,18 +147,6 @@ bool lastDealersCardMustBeShown = false;
 #pragma endregion
 bool GoToNextDeal = false;
 bool waitToEndCardsMoving = false;
-#pragma region Rects for interface
-
-SDL_Rect buttonRect = { 10, 500, 60, 60 };
-SDL_Rect hitButtonRect = { 800, 400, 60, 60 };
-SDL_Rect stayButtonRect = { 800, 500, 60, 60 };
-
-SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
-SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
-
-SDL_Rect GoToNextDealRect = { 450, 300, 100, 60 };
-SDL_Rect SwitchCardsTexturesRect = { 10, 10, 60, 60 };
-#pragma endregion
 
 int moneyToBet = 100;
 
@@ -165,7 +167,7 @@ void RenderThreadFunction() {
         SDL_RenderClear(renderer);
         rendererMutex.unlock();
        
-        MoveCard();
+       // MoveCard();
         //player score
 
         if (player.ShowScore().second == 21)
@@ -249,13 +251,13 @@ void RenderThreadFunction() {
          
             SDL_Surface* surface = IMG_Load("Assets/button.jpg");
 
-           // rendererMutex.lock();
+            rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
          
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &hitButtonRect);
 
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &stayButtonRect);
-          //  rendererMutex.unlock();
+            rendererMutex.unlock();
             SDL_DestroyTexture(buttonTexture);
             SDL_FreeSurface(surface);
 
@@ -266,30 +268,38 @@ void RenderThreadFunction() {
         if (waitToEndCardsMoving) {
             SDL_Surface* surface = IMG_Load("Assets/button.jpg");
 
-            // rendererMutex.lock();
+             rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
 
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &GoToNextDealRect);
 
-            //  rendererMutex.unlock();
+             rendererMutex.unlock();
             SDL_DestroyTexture(buttonTexture);
             SDL_FreeSurface(surface);
         }
 
         int time = 0;
         for (auto& it : Textures) {
-        //    rendererMutex.lock();
+            
             if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
                 
-                if (lastDealersCardMustBeShown)
+                if (lastDealersCardMustBeShown) {
+                    rendererMutex.lock();
                     SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
-                else
+                    rendererMutex.unlock();
+                }
+                else {
+                    rendererMutex.lock();
                     SDL_RenderCopy(renderer, Textures[time].second, nullptr, &Rects[time].first);
+                    rendererMutex.unlock();
+                }
             }
-            else
+            else {
+                rendererMutex.lock();
                 SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
-
-          //  rendererMutex.unlock();
+                rendererMutex.unlock();
+            }
+            
 
             if (time == indexTexture)
                 break;
@@ -303,6 +313,28 @@ void RenderThreadFunction() {
         SDL_RenderPresent(renderer);
         rendererMutex.unlock();
        
+/*
+        if (isMoving == false) {
+            if (indexTexture < Rects.size() - 1) {
+
+                indexTexture++;
+                isMoving = true;
+            }
+
+
+        }
+        */
+     
+       
+
+    }
+}
+void CardRendererFunction() {
+    while (true) {
+
+        if (isRunning == false)
+            break;
+        MoveCard();
 
         if (isMoving == false) {
             if (indexTexture < Rects.size() - 1) {
@@ -313,18 +345,9 @@ void RenderThreadFunction() {
 
 
         }
-
-        auto endTime = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
-        int frameDelay = 5 * 1000 - duration.count(); 
-        if (frameDelay > 0)
-           SDL_Delay(frameDelay / 1000); 
-
-       
-
     }
-}
 
+}
 bool PointInRect(int x, int y, const SDL_Rect& rect) {
     return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
 }
@@ -378,7 +401,7 @@ int main(int argc, char* argv[])
   
 
     std::thread renderThread(RenderThreadFunction);
-  
+    std::thread CardRendererThread(CardRendererFunction);
     
     SDL_Surface* back = IMG_Load("/Assets/back.png");
    
@@ -401,7 +424,7 @@ int main(int argc, char* argv[])
             if (event.type == SDL_QUIT) {
                 isRunning = false;
                 renderThread.join();
-                
+                CardRendererThread.join();
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
@@ -653,6 +676,7 @@ int main(int argc, char* argv[])
                     DealerCardIndex = 0;
                     moneyToBet = 100;
                     indexTexture = 0;
+
 
                     player.Reload();
                     dealer.Reload();
