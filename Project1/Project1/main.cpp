@@ -165,7 +165,7 @@ void RenderThreadFunction() {
         SDL_RenderClear(renderer);
         rendererMutex.unlock();
 
-        MoveCard();
+      //  MoveCard();
         //player score
 
         if (player.ShowScore().second == 21)
@@ -304,7 +304,7 @@ void RenderThreadFunction() {
         rendererMutex.unlock();
 
 
-        if (isMoving == false) {
+       /* if (isMoving == false) {
             if (indexTexture < Rects.size() - 1) {
 
                 indexTexture++;
@@ -312,7 +312,7 @@ void RenderThreadFunction() {
             }
 
 
-        }
+        }*/
 
         auto endTime = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
@@ -324,6 +324,27 @@ void RenderThreadFunction() {
 
     }
 }
+void RenderCardsThreadFunction() {
+    while (true) {
+
+        if (isRunning == false)
+            break;
+
+        MoveCard();
+
+        if (isMoving == false) {
+            if (indexTexture < Rects.size() - 1) {
+
+                indexTexture++;
+                isMoving = true;
+            }
+
+
+        }
+    }
+
+}
+
 
 bool PointInRect(int x, int y, const SDL_Rect& rect) {
     return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
@@ -378,7 +399,7 @@ int main(int argc, char* argv[])
 
 
     std::thread renderThread(RenderThreadFunction);
-
+    std::thread renderCardsThread(RenderCardsThreadFunction);
 
 
 
@@ -400,6 +421,7 @@ int main(int argc, char* argv[])
             if (event.type == SDL_QUIT) {
                 isRunning = false;
                 renderThread.join();
+                renderCardsThread.join();
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
