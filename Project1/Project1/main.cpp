@@ -21,15 +21,15 @@ Mix_Music* gMusic = NULL;
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
-const int WINDOW_WIDTH = 900;
-const int WINDOW_HEIGHT = 600;
-const int CARD_WIDTH = 100;
-const int CARD_HEIGHT = 150;
+const int WINDOW_WIDTH = 1200;
+const int WINDOW_HEIGHT = 900;
+const int CARD_WIDTH = 500;
+const int CARD_HEIGHT = 500;
 
 SDL_Renderer* renderer = nullptr;
 
-SDL_Rect destinationRectForPlayer{ 300, 400, 150, 200 };
-SDL_Rect destinationRectForDealer{ 300, 50, 150, 200 };
+SDL_Rect destinationRectForPlayer{ WINDOW_WIDTH / 4, WINDOW_HEIGHT / 1.76, CARD_WIDTH, CARD_HEIGHT };
+SDL_Rect destinationRectForDealer{ WINDOW_WIDTH / 4, -150, CARD_WIDTH, CARD_HEIGHT };
 
 std::vector<std::pair<SDL_Rect, SDL_Rect>> Rects;
 std::vector<std::pair<SDL_Texture*, SDL_Texture*>> Textures;
@@ -58,7 +58,7 @@ public:
         dealer.DealCards(player, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, CARD_WIDTH, CARD_HEIGHT }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, CARD_WIDTH, CARD_HEIGHT });
 
             Rects.push_back(temp);
             Textures.push_back(playerCardsPtr->at(PlayerCardIndex).GetTexture());
@@ -74,7 +74,7 @@ public:
         dealer.DealCards(dealer, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200,CARD_WIDTH, CARD_HEIGHT }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, CARD_WIDTH, CARD_HEIGHT });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
@@ -87,7 +87,7 @@ public:
             Deck::GetInstance().AddCard(rendererMutex);
             dealer.DealCards(dealer, 1);
 
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, CARD_WIDTH, CARD_HEIGHT }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, CARD_WIDTH, CARD_HEIGHT });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
@@ -136,15 +136,14 @@ bool GoToNextDeal = false;
 bool waitToEndCardsMoving = false;
 #pragma region Rects for interface
 
-SDL_Rect buttonRect = { 10, 500, 60, 60 };
-SDL_Rect hitButtonRect = { 800, 400, 60, 60 };
-SDL_Rect stayButtonRect = { 800, 500, 60, 60 };
-
+SDL_Rect buttonRect = { 10, WINDOW_HEIGHT - 70, 60, 60 };
+SDL_Rect hitButtonRect = { WINDOW_WIDTH - 70,  WINDOW_HEIGHT - 170, 60, 60 };
+SDL_Rect stayButtonRect = { WINDOW_WIDTH - 70,  WINDOW_HEIGHT - 70, 60, 60 };
 SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
 SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
-
 SDL_Rect GoToNextDealRect = { 450, 300, 100, 60 };
 SDL_Rect SwitchCardsTexturesRect = { 10, 10, 60, 60 };
+
 #pragma endregion
 
 int moneyToBet = 100;
