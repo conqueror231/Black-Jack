@@ -1,5 +1,4 @@
-﻿#include <SDL.h>
-#include <SDL_image.h>
+﻿#include <SDL_image.h>
 #include<iostream>
 #include<list>
 #include"PlayingCard.h"
@@ -22,29 +21,15 @@ Mix_Music* gMusic = NULL;
 
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath);
 
-const int WINDOW_WIDTH = 1200;
-const int WINDOW_HEIGHT = 900;
-const int CARD_WIDTH = 500;
-const int CARD_HEIGHT = 500;
+const int WINDOW_WIDTH = 900;
+const int WINDOW_HEIGHT = 600;
+const int CARD_WIDTH = 100;
+const int CARD_HEIGHT = 150;
 
 SDL_Renderer* renderer = nullptr;
 
-SDL_Rect destinationRectForPlayer{ WINDOW_WIDTH / 4, WINDOW_HEIGHT / 1.76, CARD_WIDTH, CARD_HEIGHT };
-SDL_Rect destinationRectForDealer{ WINDOW_WIDTH/4, -150, CARD_WIDTH, CARD_HEIGHT };
-
-#pragma region Rects for interface_
-
-SDL_Rect buttonRect = { 10, WINDOW_HEIGHT - 70, 60, 60 };
-SDL_Rect hitButtonRect = { WINDOW_WIDTH - 70,  WINDOW_HEIGHT - 170, 60, 60 };
-SDL_Rect stayButtonRect = { WINDOW_WIDTH - 70,  WINDOW_HEIGHT - 70, 60, 60 };
-
-SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
-SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
-
-SDL_Rect GoToNextDealRect = { 450, 300, 100, 60 };
-SDL_Rect SwitchCardsTexturesRect = { 10, 10, 60, 60 };
-#pragma endregion
-
+SDL_Rect destinationRectForPlayer{ 300, 400, 150, 200 };
+SDL_Rect destinationRectForDealer{ 300, 50, 150, 200 };
 
 std::vector<std::pair<SDL_Rect, SDL_Rect>> Rects;
 std::vector<std::pair<SDL_Texture*, SDL_Texture*>> Textures;
@@ -67,13 +52,13 @@ public:
         Mix_PlayChannel(-1, dealCardEffect, 0);
         Mix_Volume(-1, MIX_MAX_VOLUME / 8);
 
-      for(int i = 0; i < countOfCards_; i++)
-      Deck::GetInstance().AddCard(rendererMutex);
+        for (int i = 0; i < countOfCards_; i++)
+            Deck::GetInstance().AddCard(rendererMutex);
 
         dealer.DealCards(player, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, CARD_WIDTH, CARD_HEIGHT }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, CARD_WIDTH, CARD_HEIGHT });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForPlayer.x + 30 * PlayerCardIndex, destinationRectForPlayer.y, 150, 200 });
 
             Rects.push_back(temp);
             Textures.push_back(playerCardsPtr->at(PlayerCardIndex).GetTexture());
@@ -89,7 +74,7 @@ public:
         dealer.DealCards(dealer, countOfCards_);
 
         for (int i = 0; i < countOfCards_; i++) {
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, CARD_WIDTH, CARD_HEIGHT }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, CARD_WIDTH, CARD_HEIGHT });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
@@ -98,11 +83,11 @@ public:
 
     void DealerLogic(Dealer& dealer) {
         while (dealer.ShowScore().first < 17) {
-        
+
             Deck::GetInstance().AddCard(rendererMutex);
             dealer.DealCards(dealer, 1);
 
-            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, CARD_WIDTH, CARD_HEIGHT }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y,CARD_WIDTH, CARD_HEIGHT });
+            std::pair<SDL_Rect, SDL_Rect> temp({ 700, 200, 150, 200 }, { destinationRectForDealer.x + 30 * DealerCardIndex, destinationRectForDealer.y, 150, 200 });
             Rects.push_back(temp);
             Textures.push_back(dealerCardsPtr->at(DealerCardIndex).GetTexture());
             DealerCardIndex++;
@@ -115,19 +100,21 @@ public:
     }
 };
 
+
 void ShowText(std::string text, SDL_Rect& place, SDL_Color color, std::string fontPath) {
     TTF_Font* font = TTF_OpenFont(fontPath.c_str(), 30);
     SDL_Color textColor = color;
     SDL_Surface* textSurface = TTF_RenderText_Solid(font, text.c_str(), textColor);
-   // rendererMutex.lock();
+    // rendererMutex.lock();
     SDL_Texture* textTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
 
     SDL_RenderCopy(renderer, textTexture, nullptr, &place);
-   // rendererMutex.unlock();
+    // rendererMutex.unlock();
     SDL_DestroyTexture(textTexture);
     SDL_FreeSurface(textSurface);
     TTF_CloseFont(font);
 }
+
 
 double x = 1, y = 1;
 
@@ -147,6 +134,18 @@ bool lastDealersCardMustBeShown = false;
 #pragma endregion
 bool GoToNextDeal = false;
 bool waitToEndCardsMoving = false;
+#pragma region Rects for interface
+
+SDL_Rect buttonRect = { 10, 500, 60, 60 };
+SDL_Rect hitButtonRect = { 800, 400, 60, 60 };
+SDL_Rect stayButtonRect = { 800, 500, 60, 60 };
+
+SDL_Rect moneyToBetRect = { 10, 400, 100, 100 };
+SDL_Rect totalBankMoneyRect = { 300, 300, 100, 60 };
+
+SDL_Rect GoToNextDealRect = { 450, 300, 100, 60 };
+SDL_Rect SwitchCardsTexturesRect = { 10, 10, 60, 60 };
+#pragma endregion
 
 int moneyToBet = 100;
 
@@ -155,7 +154,7 @@ int moneyToBet = 100;
 void RenderThreadFunction() {
     while (true) {
 
-      
+
         auto startTime = std::chrono::high_resolution_clock::now();
         std::string text;
 
@@ -166,8 +165,8 @@ void RenderThreadFunction() {
         rendererMutex.lock();
         SDL_RenderClear(renderer);
         rendererMutex.unlock();
-       
-       // MoveCard();
+
+        MoveCard();
         //player score
 
         if (player.ShowScore().second == 21)
@@ -176,7 +175,7 @@ void RenderThreadFunction() {
 
         SDL_Rect HandScore{ destinationRectForPlayer.x + 100 + 40 * playerCardsPtr->size(), destinationRectForPlayer.y, 100, 100 };
 
-     
+
         ShowText(text, HandScore, { 0,0,0 }, "Assets/lazy.ttf");
 
         //dealer score
@@ -196,7 +195,7 @@ void RenderThreadFunction() {
         text = "Bank:";
         text.append(std::to_string(Bank::GetInstance().GetTotalMoney()).c_str());
 
-      
+
         ShowText(text, totalBankMoneyRect, { 0,0,0 }, "Assets/lazy.ttf");
 
         //Player Money
@@ -204,37 +203,37 @@ void RenderThreadFunction() {
         text.append(std::to_string(player.GetMoney()));
 
         SDL_Rect PlayerMoney{ destinationRectForPlayer.x - 150, destinationRectForPlayer.y, 150, 60 };
-        
+
         ShowText(text, PlayerMoney, { 0,0,0 }, "Assets/lazy.ttf");
 
         {
-        
+
             SDL_Surface* surface = IMG_Load("Assets/button.jpg");
-             rendererMutex.lock();
+            rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
 
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &SwitchCardsTexturesRect);
-              rendererMutex.unlock();
+            rendererMutex.unlock();
             SDL_DestroyTexture(buttonTexture);
             SDL_FreeSurface(surface);
 
         }
 
         if (betStage) {
-           
+
             SDL_Surface* surface = IMG_Load("Assets/button.jpg");
 
 
 
-          
+
             std::string path = "Assets/lazy.ttf";
             ShowText(std::to_string(moneyToBet), moneyToBetRect, { 0,0,0 }, "Assets/lazy.ttf");
-            if (surface == nullptr){
+            if (surface == nullptr) {
                 std::cout << path << std::endl;
             }
-                
 
-           rendererMutex.lock();
+
+            rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &buttonRect);
             rendererMutex.unlock();
@@ -244,20 +243,20 @@ void RenderThreadFunction() {
 
             SDL_FreeSurface(surface);
         }
-       
+
         if (hitOrStandStage) {
-           
-           
-         
+
+
+
             SDL_Surface* surface = IMG_Load("Assets/button.jpg");
 
-            rendererMutex.lock();
+            // rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
-         
+
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &hitButtonRect);
 
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &stayButtonRect);
-            rendererMutex.unlock();
+            //  rendererMutex.unlock();
             SDL_DestroyTexture(buttonTexture);
             SDL_FreeSurface(surface);
 
@@ -268,38 +267,30 @@ void RenderThreadFunction() {
         if (waitToEndCardsMoving) {
             SDL_Surface* surface = IMG_Load("Assets/button.jpg");
 
-             rendererMutex.lock();
+            // rendererMutex.lock();
             SDL_Texture* buttonTexture = SDL_CreateTextureFromSurface(renderer, surface);
 
             SDL_RenderCopy(renderer, buttonTexture, nullptr, &GoToNextDealRect);
 
-             rendererMutex.unlock();
+            //  rendererMutex.unlock();
             SDL_DestroyTexture(buttonTexture);
             SDL_FreeSurface(surface);
         }
 
         int time = 0;
         for (auto& it : Textures) {
-            
+            //    rendererMutex.lock();
             if (it == dealerCardsPtr->at(dealerCardsPtr->size() - 1).GetTexture()) {
-                
-                if (lastDealersCardMustBeShown) {
-                    rendererMutex.lock();
+
+                if (lastDealersCardMustBeShown)
                     SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
-                    rendererMutex.unlock();
-                }
-                else {
-                    rendererMutex.lock();
+                else
                     SDL_RenderCopy(renderer, Textures[time].second, nullptr, &Rects[time].first);
-                    rendererMutex.unlock();
-                }
             }
-            else {
-                rendererMutex.lock();
+            else
                 SDL_RenderCopy(renderer, Textures[time].first, nullptr, &Rects[time].first);
-                rendererMutex.unlock();
-            }
-            
+
+            //  rendererMutex.unlock();
 
             if (time == indexTexture)
                 break;
@@ -312,29 +303,7 @@ void RenderThreadFunction() {
         rendererMutex.lock();
         SDL_RenderPresent(renderer);
         rendererMutex.unlock();
-       
-/*
-        if (isMoving == false) {
-            if (indexTexture < Rects.size() - 1) {
 
-                indexTexture++;
-                isMoving = true;
-            }
-
-
-        }
-        */
-     
-       
-
-    }
-}
-void CardRendererFunction() {
-    while (true) {
-
-        if (isRunning == false)
-            break;
-        MoveCard();
 
         if (isMoving == false) {
             if (indexTexture < Rects.size() - 1) {
@@ -345,9 +314,18 @@ void CardRendererFunction() {
 
 
         }
-    }
 
+        auto endTime = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(endTime - startTime);
+        int frameDelay = 5 * 1000 - duration.count();
+        if (frameDelay > 0)
+            SDL_Delay(frameDelay / 1000);
+
+
+
+    }
 }
+
 bool PointInRect(int x, int y, const SDL_Rect& rect) {
     return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
 }
@@ -363,22 +341,22 @@ int main(int argc, char* argv[])
         std::cout << "SDL could not initialize! SDL Error: " << SDL_GetError() << std::endl;
         return -1;
     }
-   
+
     if (TTF_Init() == -1)
     {
         std::cout << "SDL could not initialize! SDL Error: " << TTF_GetError() << std::endl;
-        return -1; 
+        return -1;
     }
 
     if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
     {
         printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
-       
+
     }
 
 
 
-    SDL_Window* window = SDL_CreateWindow("Black Nigger", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
+    SDL_Window* window = SDL_CreateWindow("Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
 
@@ -387,7 +365,7 @@ int main(int argc, char* argv[])
     deck.SetRenderer(renderer);
     rendererMutex.unlock();
 
-  
+
 
     playerCardsPtr = player.GetCardInstance();
     dealerCardsPtr = dealer.GetCardInstance();
@@ -396,20 +374,19 @@ int main(int argc, char* argv[])
 
     dispenser disp;
 
-  
+
     SDL_Rect StartRect{ 500, 200, 150, 200 };
-  
+
 
     std::thread renderThread(RenderThreadFunction);
-    std::thread CardRendererThread(CardRendererFunction);
-    
-    SDL_Surface* back = IMG_Load("/Assets/back.png");
-   
+
+
+
+
     rendererMutex.lock();
-    SDL_Texture* backText = SDL_CreateTextureFromSurface(renderer, back);
-    SDL_RenderCopy(renderer, backText, nullptr, nullptr);
+    SDL_SetRenderDrawColor(renderer, 0, 183, 0, 255);
     rendererMutex.unlock();
-  
+
 
 
     bool takeCard = false;
@@ -417,14 +394,13 @@ int main(int argc, char* argv[])
     gMusic = Mix_LoadMUS("Assets/music.mp3");
 
     Mix_PlayMusic(gMusic, -1);
-     Mix_VolumeMusic(20);
+    Mix_VolumeMusic(20);
     while (isRunning) {
 
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
                 isRunning = false;
                 renderThread.join();
-                CardRendererThread.join();
             }
 
             if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
@@ -434,10 +410,10 @@ int main(int argc, char* argv[])
                     Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/buttonPressed.mp3");
                     Mix_PlayChannel(-1, dealCardEffect, 0);
                     Mix_Volume(-1, MIX_MAX_VOLUME / 4);
-                   // Deck::GetInstance().SwitchToAnotherTextureCards(rendererMutex);
+                    // Deck::GetInstance().SwitchToAnotherTextureCards(rendererMutex);
                 }
             }
-          
+
 
             if (betStage == true)
             {
@@ -455,7 +431,7 @@ int main(int argc, char* argv[])
                     }
                 }
                 if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_UP) {
-               
+
                     Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/chips.mp3");
                     Mix_PlayChannel(-1, dealCardEffect, 0);
                     Mix_Volume(-1, MIX_MAX_VOLUME / 4);
@@ -465,7 +441,7 @@ int main(int argc, char* argv[])
                     std::cout << "Money to bet:" << moneyToBet << std::endl;
                 }
                 if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_DOWN) {
-                
+
                     Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/chips.mp3");
                     Mix_PlayChannel(-1, dealCardEffect, 0);
                     Mix_Volume(-1, MIX_MAX_VOLUME / 4);
@@ -483,7 +459,7 @@ int main(int argc, char* argv[])
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, hitButtonRect)) {
-                      
+
                         Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/buttonPressed.mp3");
                         Mix_PlayChannel(-1, dealCardEffect, 0);
                         Mix_Volume(-1, MIX_MAX_VOLUME / 4);
@@ -498,7 +474,7 @@ int main(int argc, char* argv[])
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, stayButtonRect)) {
-                      
+
                         Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/buttonPressed.mp3");
                         Mix_PlayChannel(-1, dealCardEffect, 0);
                         Mix_Volume(-1, MIX_MAX_VOLUME / 4);
@@ -519,11 +495,11 @@ int main(int argc, char* argv[])
                     int mouseX = event.button.x;
                     int mouseY = event.button.y;
                     if (PointInRect(mouseX, mouseY, GoToNextDealRect)) {
-                       
+
                         Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/buttonPressed.mp3");
                         Mix_PlayChannel(-1, dealCardEffect, 0);
                         Mix_Volume(-1, MIX_MAX_VOLUME / 4);
-                        
+
 
                         GoToNextDeal = true;
 
@@ -548,15 +524,15 @@ int main(int argc, char* argv[])
         }
 
         if (startCardsStage) {
-            
+
             std::cout << "DealCards";
-            
+
             disp.TakeCard(dealer, 2);
             disp.TakeCard(player, 2);
-      
+
             startCardsStage = false;
             hitOrStandStage = true;
-         
+
         }
 
         if (hitOrStandStage) {
@@ -602,7 +578,7 @@ int main(int argc, char* argv[])
 
         if (winDefindingStage)
         {
-          
+
 
             int playerScore = player.ShowScore().first;
             int dealerScore = dealer.ShowScore().first;
@@ -626,13 +602,13 @@ int main(int argc, char* argv[])
 
             if (playerScore > dealerScore && playerScore < 22)
             {
-             
+
                 Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/winChisp.mp3");
                 Mix_PlayChannel(-1, dealCardEffect, 0);
-                Mix_Volume(-1, MIX_MAX_VOLUME/8);
+                Mix_Volume(-1, MIX_MAX_VOLUME / 8);
 
 
-                
+
 
                 Bank::GetInstance().GiveMoney(moneyToBet, player);
                 std::cout << "player won (playerScore > dealerScore) ";
@@ -643,10 +619,10 @@ int main(int argc, char* argv[])
                 std::cout << "dealer lost (dealer > 21)" << std::endl;
                 Bank::GetInstance().GiveMoney(moneyToBet, player);
 
-             
+
                 Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/winChisp.mp3");
                 Mix_PlayChannel(-1, dealCardEffect, 0);
-                Mix_Volume(-1, MIX_MAX_VOLUME/8);
+                Mix_Volume(-1, MIX_MAX_VOLUME / 8);
 
             }
             if (playerScore > 21) {
@@ -676,7 +652,6 @@ int main(int argc, char* argv[])
                     DealerCardIndex = 0;
                     moneyToBet = 100;
                     indexTexture = 0;
-
 
                     player.Reload();
                     dealer.Reload();
@@ -733,7 +708,7 @@ void MoveCard() {
 
         if (std::abs(Rects[indexTexture].first.x - Rects[indexTexture].second.x) < 0.1 && std::abs(Rects[indexTexture].first.y - Rects[indexTexture].second.y) < 0.1) {
             if (Rects.size() - 1 != indexTexture) {
-               
+
                 Mix_Chunk* dealCardEffect = Mix_LoadWAV("Assets/cardPlacedSound.mp3");
                 Mix_PlayChannel(-1, dealCardEffect, 0);
                 Mix_Volume(-1, MIX_MAX_VOLUME / 8);
