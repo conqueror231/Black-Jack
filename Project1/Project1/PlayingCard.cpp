@@ -8,7 +8,9 @@ void PlayingCard::ChangeTextures(SDL_Texture* frontText, SDL_Texture* backText) 
 
 void PlayingCard::DeleteTextures() {
 
+	if(textureFront!= nullptr)
 	SDL_DestroyTexture(textureFront);
+	if (textureBack != nullptr)
 	SDL_DestroyTexture(textureBack);
 }
 
